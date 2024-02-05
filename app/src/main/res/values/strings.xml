@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Flick</string>
+    <string name="title_activity_music_list">MusicListActivity</string>
+    <string name="music_art">Music Art</string>
+</resources>
