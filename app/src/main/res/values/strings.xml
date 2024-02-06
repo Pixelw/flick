@@ -2,4 +2,15 @@
     <string name="app_name">Flick</string>
     <string name="title_activity_music_list">MusicListActivity</string>
     <string name="music_art">Music Art</string>
+
+    <string name="ppp" translatable="false">Poppin\'Party</string>
+    <string name="ag" translatable="false">Afterglow</string>
+    <string name="hhw" translatable="false">Hello, Happy World!</string>
+    <string name="pp" translatable="false">Pastel＊Palettes</string>
+    <string name="r" translatable="false">Roselia</string>
+    <string name="ras" translatable="false">RAISE A SUILEN</string>
+    <string name="mnk" translatable="false">Morfonica</string>
+    <string name="mygo" translatable="false">MyGO!!!!!</string>
+
+    <string name="mixed_event">Character mixed event</string>
 </resources>

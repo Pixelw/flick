@@ -4,7 +4,7 @@ import retrofit2.http.GET
 
 interface MusicNetApi {
 
-    @GET
-    suspend fun getAllMusic(): MusicAllListResponse
+    @GET("all_music.json")
+    suspend fun getAllMusic(): List<MusicModel>
 
 }

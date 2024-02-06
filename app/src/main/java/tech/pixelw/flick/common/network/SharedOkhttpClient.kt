@@ -1,4 +1,4 @@
-package tech.pixelw.flick.common
+package tech.pixelw.flick.common.network
 
 import okhttp3.OkHttpClient
 

@@ -1,4 +1,4 @@
-package tech.pixelw.flick.ui.theme
+package tech.pixelw.flick.common.ui.theme
 
 import android.app.Activity
 import android.os.Build

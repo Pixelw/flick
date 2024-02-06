@@ -30,4 +30,10 @@ data class MusicModel(
     val musicTitle: String? = null,
     @Json(name = "publishedAt")
     val publishedAt: List<Long> = listOf()
-)
+) {
+    fun getAlbumArtUrl(hostType: Int): String {
+        return when (hostType) {
+            else -> "https://lapi.pixelw.tech/bandroid/img/musicjacket/${musicSerialId}_jacket1.webp"
+        }
+    }
+}

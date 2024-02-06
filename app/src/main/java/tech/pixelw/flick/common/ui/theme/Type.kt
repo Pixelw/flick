@@ -1,4 +1,4 @@
-package tech.pixelw.flick.ui.theme
+package tech.pixelw.flick.common.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
