@@ -38,7 +38,7 @@ fun PreviewMusicListCell() {
             length = 125.4,
             composer = "kz (livetune)",
             jacketImage = listOf("https://brands.home-assistant.io/_/jellyfin/logo.png"),
-            musicSerialId = "15"
+            musicSerialId = 15
         )
     )
 }
@@ -53,7 +53,7 @@ fun MusicListCell(model: MusicModel) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box {
                 Text(
-                    text = model.musicSerialId, style = MaterialTheme.typography.titleMedium, modifier = Modifier
+                    text = model.musicSerialId.toString(), style = MaterialTheme.typography.titleMedium, modifier = Modifier
                         .size(50.dp)
                         .wrapContentHeight(align = Alignment.CenterVertically), textAlign = TextAlign.Center
                 )

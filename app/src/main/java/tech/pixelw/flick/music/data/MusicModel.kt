@@ -25,7 +25,7 @@ data class MusicModel(
     @Json(name = "lyricist")
     val lyricist: String? = null,
     @Json(name = "musicSerialId")
-    val musicSerialId: String = "",
+    val musicSerialId: Int = 0,
     @Json(name = "musicTitle")
     val musicTitle: String? = null,
     @Json(name = "publishedAt")

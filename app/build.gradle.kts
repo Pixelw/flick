@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+    id("kotlin-kapt")
 }
 
 android {
@@ -18,6 +21,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
+            kotlinOptions(Action<KotlinJvmOptions> {
+                val tempList = ArrayList(freeCompilerArgs)
+                tempList.addAll(
+                    listOf(
+                        "-Xno-call-assertions",
+                        "-Xno-receiver-assertions",
+                        "-Xno-param-assertions"
+                    )
+                )
+                freeCompilerArgs = tempList
+                logger.log(LogLevel.WARN, "114514: removed kotlin null assertion!")
+            })
         }
     }
 
@@ -39,6 +56,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.7"
@@ -52,7 +70,7 @@ android {
 
 dependencies {
 
-    // base
+    // base Compose
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -63,6 +81,11 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
 
+    // base View
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.android.material:material:1.12.0-alpha03")
+
     // added
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
@@ -72,10 +95,8 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     implementation("androidx.media3:media3-exoplayer:1.2.1")
-//    implementation("androidx.media3:media3-ui:1.2.1")
     implementation("androidx.media3:media3-common:1.2.1")
     implementation("androidx.media3:media3-session:1.2.1")
-    implementation("com.google.android.material:material:1.11.0")
 
     // test
     testImplementation("junit:junit:4.13.2")
