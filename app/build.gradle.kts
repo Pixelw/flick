@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.7"
@@ -70,6 +71,11 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+    implementation("androidx.media3:media3-exoplayer:1.2.1")
+//    implementation("androidx.media3:media3-ui:1.2.1")
+    implementation("androidx.media3:media3-common:1.2.1")
+    implementation("androidx.media3:media3-session:1.2.1")
+    implementation("com.google.android.material:material:1.11.0")
 
     // test
     testImplementation("junit:junit:4.13.2")

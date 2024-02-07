@@ -4,7 +4,7 @@ import tech.pixelw.flick.common.network.NetApiFactory
 
 class MusicListRepository {
 
-    val api by lazy {
+    private val api by lazy {
         NetApiFactory.get(MusicNetApi::class.java)
     }
 

@@ -1,6 +1,6 @@
 package tech.pixelw.flick.common.resources
 
-class BangDream {
+class BanGDream {
 
     enum class Server(val key: Int) {
         JPN(0),
