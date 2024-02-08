@@ -1,16 +1,9 @@
 package tech.pixelw.flick.music
 
-import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import tech.pixelw.flick.R
+import androidx.databinding.ViewDataBinding
+import tech.pixelw.flick.common.ui.BaseActivity
 
-class MusicPlayActivity : AppCompatActivity() {
+class MusicPlayActivity : BaseActivity<ViewDataBinding>() {
 
-    private val viewModel by viewModels<MusicPlayViewModel>()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_music_play)
-
-    }
+    override val mainFragment = MusicPlayFragment()
 }

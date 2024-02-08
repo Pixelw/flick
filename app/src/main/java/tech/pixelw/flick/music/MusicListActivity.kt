@@ -34,10 +34,10 @@ class MusicListActivity : ComponentActivity() {
 
 @Composable
 fun MusicList(viewModel: MusicListViewModel) {
-    val s by viewModel.dataList.observeAsState()
+    val state by viewModel.dataList.observeAsState()
     LazyColumn {
-        if (s == null) return@LazyColumn
-        items(s!!) {
+        if (state == null) return@LazyColumn
+        items(state!!) {
             MusicListCell(it)
         }
     }
