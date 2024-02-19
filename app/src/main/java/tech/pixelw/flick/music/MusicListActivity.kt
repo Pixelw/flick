@@ -1,5 +1,6 @@
 package tech.pixelw.flick.music
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import tech.pixelw.flick.common.ui.theme.FlickTheme
+import tech.pixelw.flick.music.data.MusicModel
 
 class MusicListActivity : ComponentActivity() {
 
@@ -24,7 +26,9 @@ class MusicListActivity : ComponentActivity() {
             FlickTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MusicList(viewModel = viewModel)
+                    MusicList(viewModel = viewModel) {
+                        startActivity(Intent(this, MusicPlayActivity::class.java))
+                    }
                 }
             }
         }
@@ -33,12 +37,12 @@ class MusicListActivity : ComponentActivity() {
 }
 
 @Composable
-fun MusicList(viewModel: MusicListViewModel) {
+fun MusicList(viewModel: MusicListViewModel, onClick: (MusicModel) -> Unit) {
     val state by viewModel.dataList.observeAsState()
     LazyColumn {
         if (state == null) return@LazyColumn
         items(state!!) {
-            MusicListCell(it)
+            MusicListCell(it, onClick)
         }
     }
 }

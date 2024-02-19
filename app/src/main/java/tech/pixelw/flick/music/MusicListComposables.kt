@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import tech.pixelw.flick.R
+import tech.pixelw.flick.common.extension.toast
 import tech.pixelw.flick.common.resources.ResourceMapper
 import tech.pixelw.flick.music.data.MusicModel
 
@@ -39,13 +40,17 @@ fun PreviewMusicListCell() {
             composer = "kz (livetune)",
             jacketImage = listOf("https://brands.home-assistant.io/_/jellyfin/logo.png"),
             musicSerialId = 15
-        )
+        ),
+        onClick = { toast("clicked ${it.musicTitle}") }
     )
 }
 
 @Composable
-fun MusicListCell(model: MusicModel) {
+fun MusicListCell(model: MusicModel, onClick: (MusicModel) -> Unit) {
     Surface(
+        onClick = {
+            onClick(model)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
