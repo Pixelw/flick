@@ -63,6 +63,12 @@ object LogUtil {
         }
     }
 
+    fun e(throwable: Throwable, tag: String = FlickApp.appName) {
+        if (level <= ERROR) {
+            Log.e(tag, throwable.localizedMessage, throwable)
+        }
+    }
+
     private fun avoidNullMsg(msg: String?): String {
         if (msg == null) {
             return NULL_LOG_MSG

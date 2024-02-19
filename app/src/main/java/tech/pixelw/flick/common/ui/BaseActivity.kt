@@ -11,8 +11,8 @@ import tech.pixelw.flick.R
 import tech.pixelw.flick.common.misc.LogUtil
 
 abstract class BaseActivity<B : ViewDataBinding> : AppCompatActivity() {
-    @JvmField
-    protected var binding: B? = null
+
+    protected lateinit var binding: B
 
     protected val edge2EdgeBuilder: ImmersiveUtilX.Edge2EdgeBuilder by lazy {
         ImmersiveUtilX.Edge2EdgeBuilder(this, window)
@@ -22,7 +22,7 @@ abstract class BaseActivity<B : ViewDataBinding> : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         if (usingBinding()) {
             binding = DataBindingUtil.setContentView(this, layoutID)
-            require(binding != null) { "DataBindingUtil.setContentView returns a null binding object" }
+            require(this::binding.isInitialized) { "DataBindingUtil.setContentView returns a null binding object" }
         } else {
             setContentView(layoutID)
         }
