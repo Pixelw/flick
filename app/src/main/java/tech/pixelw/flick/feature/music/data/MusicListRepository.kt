@@ -2,8 +2,8 @@ package tech.pixelw.flick.feature.music.data
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import tech.pixelw.flick.common.apis
 import tech.pixelw.flick.core.misc.LogUtil
-import tech.pixelw.flick.core.network.NetApiFactory
 
 object MusicListRepository {
 
@@ -17,9 +17,7 @@ object MusicListRepository {
     private var cachedMetadataListMap: MutableMap<String, List<MediaMetadata>> = mutableMapOf()
     private var cachedMediaItemListMap: MutableMap<String, List<MediaItem>> = mutableMapOf()
 
-    private val api by lazy {
-        NetApiFactory.get(MusicNetApi::class.java)
-    }
+    private val api by apis(MusicNetApi::class.java)
 
     suspend fun getMusicList(rootId: String): List<MusicModel> {
         val cached = cachedListMap[rootId]

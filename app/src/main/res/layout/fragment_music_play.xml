@@ -9,7 +9,9 @@
             name="vm"
             type="tech.pixelw.flick.feature.music.MusicPlayViewModel" />
 
-        <import type="tech.pixelw.flick.feature.music.MusicResMapper" />
+        <import type="tech.pixelw.flick.common.resources.ResourceMapper" />
+
+        <import type="android.text.format.DateUtils" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +35,7 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_album_art_player"
-                coilSrc="@{MusicResMapper.getSongArtUrl(vm.musicModel)}"
+                coilSrc="@{vm.musicModel.songArtUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:srcCompat="@tools:sample/avatars[5]" />
@@ -46,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="16dp"
+            android:text="@{vm.musicModel.musicTitle}"
             android:textAppearance="?textAppearanceDisplayLarge"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="8dp"
+            android:text="@{vm.musicModel.bandName}"
             android:textAppearance="?textAppearanceDisplayMedium"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,6 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="8dp"
+            android:text="@{ResourceMapper.localize(vm.musicModel.description)}"
             android:textAppearance="?textAppearanceLabelSmall"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -93,6 +98,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="?selectableItemBackgroundBorderless"
+                android:onClick="@{vm::prevOnClick}"
                 android:src="@drawable/ic_round_skip_previous_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -101,6 +107,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginHorizontal="48dp"
+                android:onClick="@{vm::playPauseOnClick}"
                 android:src="@drawable/ic_round_play_circle_filled_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -108,6 +115,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="?selectableItemBackgroundBorderless"
+                android:onClick="@{vm::nextOnClick}"
                 android:src="@drawable/ic_round_skip_next_24" />
         </LinearLayout>
 
@@ -118,6 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="-4dp"
+            android:text="@{DateUtils.formatElapsedTime(vm.playPosition.position)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintStart_toStartOf="@id/slider_player"
             app:layout_constraintTop_toBottomOf="@id/slider_player"
@@ -129,6 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="-4dp"
             android:layout_marginEnd="16dp"
+            android:text="@{DateUtils.formatElapsedTime(vm.playPosition.duration)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintEnd_toEndOf="@id/slider_player"
             app:layout_constraintTop_toBottomOf="@id/slider_player"
@@ -136,6 +146,7 @@
 
         <com.google.android.material.slider.Slider
             android:id="@+id/slider_player"
+            sliderCustomListener="@{v-> vm.onSliderChanged(v)}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"

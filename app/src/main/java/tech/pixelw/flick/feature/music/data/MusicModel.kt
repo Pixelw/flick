@@ -3,6 +3,8 @@ package tech.pixelw.flick.feature.music.data
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import tech.pixelw.flick.common.resources.ResourceConfig
+import tech.pixelw.flick.common.resources.Urls
 
 @JsonClass(generateAdapter = true)
 data class MusicModel(
@@ -33,4 +35,21 @@ data class MusicModel(
 ) {
 
     val mediaId = "bandoriBgm$musicSerialId"
+
+    fun getSongArtUrl(): String {
+        return when (ResourceConfig.musicArtImg) {
+            ResourceConfig.LAPI -> "${Urls.lapiRootPath}img/musicjacket/${musicSerialId}_jacket1.webp"
+            else -> ""
+        }
+
+    }
+
+    fun getSongFileUrl(): String {
+        return when (ResourceConfig.musicFile) {
+            ResourceConfig.LAPI -> "${Urls.lapiRootPath}music/${musicSerialId}.mp3"
+            else -> ""
+        }
+    }
+
+
 }

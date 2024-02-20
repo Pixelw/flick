@@ -3,9 +3,21 @@ package tech.pixelw.flick.common.resources
 import android.content.Context
 import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.R
+import tech.pixelw.flick.core.misc.LogUtil
+
 
 object ResourceMapper {
+    @JvmStatic
+    fun localize(collection: Collection<String>): String {
+        val jpnRes = collection.elementAtOrElse(0) { "" }
+        if (collection.size != 5) {
+            return jpnRes
+        }
 
+        return collection.elementAtOrElse(getLocaleIndex()) { jpnRes }
+    }
+
+    @JvmStatic
     fun getBandNameString(bandId: Int): String {
         val context: Context = FlickApp.context
         return when (bandId) {
@@ -21,4 +33,30 @@ object ResourceMapper {
             else -> "???"
         }
     }
+
+    private fun getLocaleIndex(): Int {
+        val language = FlickApp.context.resources.configuration.locales[0]!!.toString().lowercase()
+        LogUtil.i(language, TAG)
+        return when {
+            language.contains("cn") -> {
+                BanGDream.Server.CHN.key
+            }
+
+            language.contains("tw") -> {
+                BanGDream.Server.TPE.key
+            }
+
+            language.contains("kr") -> {
+                BanGDream.Server.KOR.key
+            }
+
+            language.contains("en") -> {
+                BanGDream.Server.GLO.key
+            }
+
+            else -> BanGDream.Server.JPN.key
+        }
+    }
+
+    private const val TAG = "ResourceMapper"
 }

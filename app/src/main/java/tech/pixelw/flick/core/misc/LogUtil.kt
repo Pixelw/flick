@@ -9,14 +9,14 @@ import tech.pixelw.flick.FlickApp
  * @date 2019/12/19
  */
 object LogUtil {
-    const val VERBOSE = 1
-    const val DEBUG = 2
-    const val INFO = 3
-    const val WARN = 4
-    const val ERROR = 5
-    const val NOTHING = 6
-    const val NULL_LOG_MSG = "!(null log msg)"
-    const val EMPTY_LOG_MSG = "!(empty log msg)"
+    private const val VERBOSE = 1
+    private const val DEBUG = 2
+    private const val INFO = 3
+    private const val WARN = 4
+    private const val ERROR = 5
+    private const val NOTHING = 6
+    private const val NULL_LOG_MSG = "!(null log msg)"
+    private const val EMPTY_LOG_MSG = "!(empty log msg)"
 
     //set project logging level here
     var level = if (BuildConfig.DEBUG) VERBOSE else INFO

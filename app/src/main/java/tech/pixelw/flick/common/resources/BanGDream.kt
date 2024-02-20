@@ -1,5 +1,6 @@
 package tech.pixelw.flick.common.resources
 
+@Deprecated("改为动态下发")
 class BanGDream {
 
     enum class Server(val key: Int) {

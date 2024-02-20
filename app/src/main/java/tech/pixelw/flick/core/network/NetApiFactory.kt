@@ -2,12 +2,14 @@
 
 package tech.pixelw.flick.core.network
 
+import org.jetbrains.annotations.ApiStatus.Internal
 import retrofit2.Retrofit
 
 object NetApiFactory {
 
     private val retrofitCacheMap = mutableMapOf<String, Any>()
 
+    @Internal
     fun <T> get(api: Class<T>, baseUrl: String): T {
         val key = api.name + baseUrl
         return if (retrofitCacheMap.containsKey(key)) {
