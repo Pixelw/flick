@@ -7,13 +7,15 @@
 
         <variable
             name="vm"
-            type="tech.pixelw.flick.music.MusicPlayViewModel" />
+            type="tech.pixelw.flick.feature.music.MusicPlayViewModel" />
+
+        <import type="tech.pixelw.flick.feature.music.MusicResMapper" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".music.MusicPlayActivity">
+        tools:context=".feature.music.MusicPlayActivity">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_album_art"
@@ -31,9 +33,10 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_album_art_player"
+                coilSrc="@{MusicResMapper.getSongArtUrl(vm.musicModel)}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:srcCompat="@tools:sample/avatars[2]" />
+                tools:srcCompat="@tools:sample/avatars[5]" />
         </com.google.android.material.card.MaterialCardView>
 
 

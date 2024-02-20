@@ -5,7 +5,7 @@ import android.app.Application
 import android.content.Context
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import tech.pixelw.flick.common.network.SharedOkhttpClient
+import tech.pixelw.flick.core.network.SharedOkhttpClient
 
 class FlickApp : Application(), ImageLoaderFactory {
     companion object {

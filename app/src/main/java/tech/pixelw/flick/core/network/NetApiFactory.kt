@@ -1,0 +1,27 @@
+@file:Suppress("UNCHECKED_CAST")
+
+package tech.pixelw.flick.core.network
+
+import retrofit2.Retrofit
+
+object NetApiFactory {
+
+    private val retrofitCacheMap = mutableMapOf<String, Any>()
+
+    fun <T> get(api: Class<T>, baseUrl: String): T {
+        val key = api.name + baseUrl
+        return if (retrofitCacheMap.containsKey(key)) {
+            retrofitCacheMap[key] as T
+        } else {
+            val create = Retrofit.Builder()
+                .callFactory(SharedOkhttpClient.DEFAULT)
+                .addConverterFactory(MoshiConverter.DEFAULT)
+                .baseUrl(baseUrl)
+                .build()
+                .create(api)
+            retrofitCacheMap[key] = create!!
+            create
+        }
+    }
+
+}

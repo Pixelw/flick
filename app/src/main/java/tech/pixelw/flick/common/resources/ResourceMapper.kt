@@ -5,6 +5,7 @@ import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.R
 
 object ResourceMapper {
+
     fun getBandNameString(bandId: Int): String {
         val context: Context = FlickApp.context
         return when (bandId) {
