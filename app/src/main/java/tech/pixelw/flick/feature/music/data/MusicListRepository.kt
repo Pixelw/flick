@@ -1,7 +1,5 @@
 package tech.pixelw.flick.feature.music.data
 
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import tech.pixelw.flick.common.apis
 import tech.pixelw.flick.core.misc.LogUtil
 
@@ -14,8 +12,8 @@ object MusicListRepository {
 
 
     private var cachedListMap: MutableMap<String, List<MusicModel>> = mutableMapOf()
-    private var cachedMetadataListMap: MutableMap<String, List<MediaMetadata>> = mutableMapOf()
-    private var cachedMediaItemListMap: MutableMap<String, List<MediaItem>> = mutableMapOf()
+//    private var cachedMetadataListMap: MutableMap<String, List<MediaMetadata>> = mutableMapOf()
+//    private var cachedMediaItemListMap: MutableMap<String, List<MediaItem>> = mutableMapOf()
 
     private val api by apis(MusicNetApi::class.java)
 

@@ -8,6 +8,8 @@ object MusicPlaylistHelper {
 
     private var playList = mutableListOf<MusicModel>()
 
+    private val mediaIdItemMap = hashMapOf<String, MediaItem>()
+
     var playIndex = -1
         private set
 
@@ -22,6 +24,7 @@ object MusicPlaylistHelper {
 
     fun clear() {
         playList.clear()
+        mediaIdItemMap.clear()
         playIndex = -1
     }
 
@@ -53,11 +56,15 @@ object MusicPlaylistHelper {
             val model = playList[i]
             if (model.mediaId == mediaId) {
                 playIndex = i
-                return model.toMediaItem()
+                return model.cachedOrConvertMediaItem()
             }
         }
         LogUtil.w("mediaId: $mediaId not found", TAG)
         return null
+    }
+
+    fun getMediaItemList(): List<MediaItem> {
+        return playList.map { it.cachedOrConvertMediaItem() }
     }
 
     fun next(): MediaItem? {
@@ -67,7 +74,7 @@ object MusicPlaylistHelper {
         } else {
             playIndex = 0
         }
-        return playList.getOrNull(playIndex)?.toMediaItem()
+        return playList.getOrNull(playIndex)?.cachedOrConvertMediaItem()
     }
 
     fun previous(): MediaItem? {
@@ -77,7 +84,18 @@ object MusicPlaylistHelper {
         } else {
             playIndex = 0
         }
-        return playList.getOrNull(playIndex)?.toMediaItem()
+        return playList.getOrNull(playIndex)?.cachedOrConvertMediaItem()
+    }
+
+    private fun MusicModel.cachedOrConvertMediaItem(): MediaItem {
+        val item = mediaIdItemMap[mediaId]
+        return if (item != null) {
+            item
+        } else {
+            val item1 = toMediaItem()
+            mediaIdItemMap[mediaId] = item1
+            item1
+        }
     }
 
     private const val TAG = "MusicPlaylistHelper"

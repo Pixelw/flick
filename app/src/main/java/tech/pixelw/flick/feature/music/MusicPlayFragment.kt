@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -57,7 +58,10 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         viewModel.currentMediaId?.let {
             val mediaItem = MusicPlaylistHelper.selectMediaItemById(it)
             if (mediaItem != null) {
-                player?.setMediaItem(mediaItem)
+                player?.addListener(object : Player.Listener {
+                    // TODO: SLY 24/2/21 联动PlaylistHelper
+                })
+                player?.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
             }
         }
 
