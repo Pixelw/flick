@@ -27,8 +27,9 @@ class MusicListActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     MusicList(viewModel = viewModel) {
+                        viewModel.preparePlaylist()
                         startActivity(Intent(this, MusicPlayActivity::class.java).apply {
-                            putExtra(MusicPlayActivity.K_MUSIC_ID, it.getMediaId())
+                            putExtra(MusicPlayActivity.K_MUSIC_ID, it.mediaId)
                         })
                     }
                 }

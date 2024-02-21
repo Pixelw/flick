@@ -9,6 +9,8 @@ import kotlin.math.min
 
 class MusicPlayViewModel : ViewModel() {
 
+    var currentMediaId: String? = null
+
     val musicModel = MutableLiveData<MusicModel>()
 
     val playPosition = MutableLiveData(PlayPosition(0, 0))

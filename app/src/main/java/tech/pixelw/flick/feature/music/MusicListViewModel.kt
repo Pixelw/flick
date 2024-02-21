@@ -10,7 +10,7 @@ import tech.pixelw.flick.feature.music.data.MusicModel
 
 class MusicListViewModel : ViewModel() {
 
-    val dataList = MutableLiveData<List<MusicModel>>()
+    val dataList = MutableLiveData<List<MusicModel>>(emptyList())
 
     fun loadData() {
         viewModelScope.launch {
@@ -22,6 +22,10 @@ class MusicListViewModel : ViewModel() {
             }
 
         }
+    }
+
+    fun preparePlaylist() {
+        MusicPlaylistHelper.setPlaylist(dataList.value!!)
     }
 
 }

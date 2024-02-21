@@ -27,7 +27,6 @@ import coil.compose.AsyncImage
 import tech.pixelw.flick.R
 import tech.pixelw.flick.common.resources.ResourceMapper
 import tech.pixelw.flick.core.extension.toast
-import tech.pixelw.flick.core.network.NetApiFactory
 import tech.pixelw.flick.feature.music.data.MusicModel
 
 @Composable
@@ -67,7 +66,7 @@ fun MusicListCell(model: MusicModel, onClick: (MusicModel) -> Unit) {
                     modifier = Modifier
                         .size(50.dp)
                         .clip(RoundedCornerShape(8.dp)),
-                    model = model.getAlbumArtUrl(NetApiFactory.HOST_PIXEL_LAPI),
+                    model = model.getSongArtUrl(),
                     contentDescription = stringResource(R.string.music_art)
                 )
             }

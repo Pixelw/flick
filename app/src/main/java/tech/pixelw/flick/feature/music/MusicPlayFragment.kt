@@ -34,6 +34,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
             val musicList = MusicListRepository.getMusicList(MusicListRepository.BANDORI_DEFAULT_PLAY_ROOT)
             val musicModel = musicList.find { musicModel -> musicModel.mediaId == musicId }
             if (musicModel != null) {
+                viewModel.currentMediaId = musicId
                 viewModel.musicModel.value = musicModel
                 // 待播放服务链接后再开始播放
             }
@@ -53,6 +54,12 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     }
 
     private fun startPlaybackIfNeeded() {
-        // TODO: SLY 24/2/20
+        viewModel.currentMediaId?.let {
+            val mediaItem = MusicPlaylistHelper.selectMediaItemById(it)
+            if (mediaItem != null) {
+                player?.setMediaItem(mediaItem)
+            }
+        }
+
     }
 }
