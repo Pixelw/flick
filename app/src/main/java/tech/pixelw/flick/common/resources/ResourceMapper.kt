@@ -8,7 +8,8 @@ import tech.pixelw.flick.core.misc.LogUtil
 
 object ResourceMapper {
     @JvmStatic
-    fun localize(collection: Collection<String>): String {
+    fun localize(collection: Collection<String>?): String {
+        if (collection.isNullOrEmpty()) return ""
         val jpnRes = collection.elementAtOrElse(0) { "" }
         if (collection.size != 5) {
             return jpnRes

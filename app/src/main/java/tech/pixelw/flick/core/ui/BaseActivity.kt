@@ -23,6 +23,7 @@ abstract class BaseActivity<B : ViewDataBinding> : AppCompatActivity() {
         if (usingBinding()) {
             binding = DataBindingUtil.setContentView(this, layoutID)
             require(this::binding.isInitialized) { "DataBindingUtil.setContentView returns a null binding object" }
+            binding.lifecycleOwner = this
         } else {
             setContentView(layoutID)
         }

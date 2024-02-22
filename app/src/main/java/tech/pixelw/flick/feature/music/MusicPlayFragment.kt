@@ -10,6 +10,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import tech.pixelw.flick.R
 import tech.pixelw.flick.core.ui.BaseFragment
@@ -22,16 +23,21 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
 
     private var player: Player? = null
 
+    private var initLoadJob: Job? = null
+
+    private var startPlayJob: Job? = null
+
     override fun usingBinding() = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.vm = viewModel
         val musicId = intent?.getStringExtra(MusicPlayActivity.K_MUSIC_ID)
         if (musicId == null) {
             activity?.finish()
             return
         }
-        lifecycleScope.launch {
+        initLoadJob = lifecycleScope.launch {
             val musicList = MusicListRepository.getMusicList(MusicListRepository.BANDORI_DEFAULT_PLAY_ROOT)
             val musicModel = musicList.find { musicModel -> musicModel.mediaId == musicId }
             if (musicModel != null) {
@@ -55,15 +61,18 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     }
 
     private fun startPlaybackIfNeeded() {
-        viewModel.currentMediaId?.let {
-            val mediaItem = MusicPlaylistHelper.selectMediaItemById(it)
-            if (mediaItem != null) {
-                player?.addListener(object : Player.Listener {
-                    // TODO: SLY 24/2/21 联动PlaylistHelper
-                })
-                player?.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
+        if (startPlayJob != null) return
+        startPlayJob = lifecycleScope.launch {
+            initLoadJob?.join()
+            viewModel.currentMediaId?.let {
+                val mediaItem = MusicPlaylistHelper.selectMediaItemById(it)
+                if (mediaItem != null && player != null) {
+                    MusicPlaylistHelper.bindPlayer(player!!)
+                    player!!.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
+                    player!!.prepare()
+                    player!!.play()
+                }
             }
         }
-
     }
 }

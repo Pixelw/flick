@@ -1,14 +1,17 @@
 package tech.pixelw.flick.feature.music
 
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.feature.music.data.MusicModel
 
-object MusicPlaylistHelper {
+object MusicPlaylistHelper : Player.Listener {
 
     private var playList = mutableListOf<MusicModel>()
 
     private val mediaIdItemMap = hashMapOf<String, MediaItem>()
+
+    private var player: Player? = null
 
     var playIndex = -1
         private set
@@ -20,6 +23,11 @@ object MusicPlaylistHelper {
     fun setPlaylist(list: List<MusicModel>) {
         playList = ArrayList(list)
         playIndex = -1
+    }
+
+    fun bindPlayer(player: Player) {
+        this.player = player
+        player.addListener(this)
     }
 
     fun clear() {
@@ -74,6 +82,7 @@ object MusicPlaylistHelper {
         } else {
             playIndex = 0
         }
+        player?.seekToNextMediaItem()
         return playList.getOrNull(playIndex)?.cachedOrConvertMediaItem()
     }
 
@@ -84,7 +93,14 @@ object MusicPlaylistHelper {
         } else {
             playIndex = 0
         }
+        player?.seekToPreviousMediaItem()
         return playList.getOrNull(playIndex)?.cachedOrConvertMediaItem()
+    }
+
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        player?.currentMediaItemIndex?.let {
+            playIndex = it
+        }
     }
 
     private fun MusicModel.cachedOrConvertMediaItem(): MediaItem {

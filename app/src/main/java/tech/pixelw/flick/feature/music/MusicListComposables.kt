@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import tech.pixelw.flick.R
-import tech.pixelw.flick.common.resources.ResourceMapper
 import tech.pixelw.flick.core.extension.toast
 import tech.pixelw.flick.feature.music.data.MusicModel
 
@@ -35,7 +34,7 @@ fun PreviewMusicListCell() {
     MusicListCell(
         MusicModel(
             musicTitle = "Tell Your World",
-            bandName = "Hatsune Miku",
+            artistName = "Hatsune Miku",
             length = 125.4,
             composer = "kz (livetune)",
             jacketImage = listOf("https://brands.home-assistant.io/_/jellyfin/logo.png"),
@@ -75,9 +74,7 @@ fun MusicListCell(model: MusicModel, onClick: (MusicModel) -> Unit) {
                 Text(style = MaterialTheme.typography.titleMedium, text = model.musicTitle ?: "")
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = if (model.bandName.isNullOrEmpty()) {
-                        ResourceMapper.getBandNameString(model.bandId)
-                    } else model.bandName, style = MaterialTheme.typography.labelSmall
+                    text = model.getBandName(), style = MaterialTheme.typography.labelSmall
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))

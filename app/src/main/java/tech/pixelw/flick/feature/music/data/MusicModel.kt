@@ -6,12 +6,15 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import tech.pixelw.flick.FlickApp
+import tech.pixelw.flick.R
 import tech.pixelw.flick.common.resources.ResourceConfig
 import tech.pixelw.flick.common.resources.ResourceMapper
 import tech.pixelw.flick.common.resources.Urls
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.min
 
 @JsonClass(generateAdapter = true)
 data class MusicModel(
@@ -20,7 +23,7 @@ data class MusicModel(
     @Json(name = "bandId")
     val bandId: Int = 0,
     @Json(name = "bandName")
-    val bandName: String? = null,
+    val artistName: String? = null,
     @Json(name = "bgmId")
     val bgmId: String = "",
     @Json(name = "composer")
@@ -38,17 +41,31 @@ data class MusicModel(
     @Json(name = "musicTitle")
     val musicTitle: String? = null,
     @Json(name = "publishedAt")
-    val publishedAt: List<Long> = listOf()
+    val publishedAt: List<Long?> = listOf()
 ) {
 
     val mediaId = "bandoriBgm$musicSerialId"
 
+    fun getBandName(): String {
+        return if (artistName.isNullOrEmpty()) {
+            ResourceMapper.getBandNameString(bandId)
+        } else artistName
+    }
+
+    fun getDescDisplay(): String {
+        return if (description.isNullOrEmpty()) {
+            FlickApp.context.getString(R.string.music_player_desc, composer, lyricist)
+        } else ResourceMapper.localize(description)
+    }
+
     private fun getFirstPublish(): Long {
-        return publishedAt.minByOrNull {
-            if (it <= 0) {
-                Long.MAX_VALUE
-            } else it
-        } ?: -1
+        var min = Long.MAX_VALUE
+        println(publishedAt.joinToString { ", " })
+        for (aLong in publishedAt) {
+            if (aLong == null) continue
+            min = min(aLong, min)
+        }
+        return min
     }
 
     fun getSongArtUrl(): String {
@@ -74,7 +91,7 @@ data class MusicModel(
             .build()
         val metaDataBuilder = MediaMetadata.Builder()
             .setTitle(musicTitle)
-            .setArtist(bandName)
+            .setArtist(getBandName())
             .setArtworkUri(Uri.parse(getSongArtUrl()))
             .setComposer(composer)
             .setWriter(lyricist)
