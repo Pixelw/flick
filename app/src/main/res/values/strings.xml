@@ -13,6 +13,6 @@
     <string name="mygo" translatable="false">MyGO!!!!!</string>
 
     <string name="mixed_event">Character mixed event</string>
-    <string name="music_player_desc">Composer: $1%s, Lyricist: $2%s</string>
+    <string name="music_player_desc">Composer: %s Lyricist: %s</string>
 
 </resources>

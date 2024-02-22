@@ -1,20 +1,16 @@
 package tech.pixelw.flick.feature.music
 
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.feature.music.data.MusicModel
 
-object MusicPlaylistHelper : Player.Listener {
+object MusicPlaylistHelper {
 
     private var playList = mutableListOf<MusicModel>()
 
     private val mediaIdItemMap = hashMapOf<String, MediaItem>()
 
-    private var player: Player? = null
-
     var playIndex = -1
-        private set
 
     fun getPlaylist(): List<MusicModel> {
         return playList
@@ -24,12 +20,6 @@ object MusicPlaylistHelper : Player.Listener {
         playList = ArrayList(list)
         playIndex = -1
     }
-
-    fun bindPlayer(player: Player) {
-        this.player = player
-        player.addListener(this)
-    }
-
     fun clear() {
         playList.clear()
         mediaIdItemMap.clear()
@@ -75,6 +65,10 @@ object MusicPlaylistHelper : Player.Listener {
         return playList.map { it.cachedOrConvertMediaItem() }
     }
 
+
+    /**
+     * 用于不支持多item的播放器
+     */
     fun next(): MediaItem? {
         if (playList.isEmpty()) return null
         if (playIndex in -1 until playList.lastIndex) {
@@ -82,10 +76,12 @@ object MusicPlaylistHelper : Player.Listener {
         } else {
             playIndex = 0
         }
-        player?.seekToNextMediaItem()
         return playList.getOrNull(playIndex)?.cachedOrConvertMediaItem()
     }
 
+    /**
+     * 用于不支持多item的播放器
+     */
     fun previous(): MediaItem? {
         if (playList.isEmpty()) return null
         if (playIndex in 1..playList.lastIndex) {
@@ -93,14 +89,7 @@ object MusicPlaylistHelper : Player.Listener {
         } else {
             playIndex = 0
         }
-        player?.seekToPreviousMediaItem()
         return playList.getOrNull(playIndex)?.cachedOrConvertMediaItem()
-    }
-
-    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-        player?.currentMediaItemIndex?.let {
-            playIndex = it
-        }
     }
 
     private fun MusicModel.cachedOrConvertMediaItem(): MediaItem {
@@ -115,4 +104,5 @@ object MusicPlaylistHelper : Player.Listener {
     }
 
     private const val TAG = "MusicPlaylistHelper"
+
 }

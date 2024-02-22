@@ -3,7 +3,6 @@ package tech.pixelw.flick.common.resources
 import android.content.Context
 import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.R
-import tech.pixelw.flick.core.misc.LogUtil
 
 
 object ResourceMapper {
@@ -37,7 +36,6 @@ object ResourceMapper {
 
     private fun getLocaleIndex(): Int {
         val language = FlickApp.context.resources.configuration.locales[0]!!.toString().lowercase()
-        LogUtil.i(language, TAG)
         return when {
             language.contains("cn") -> {
                 BanGDream.Server.CHN.key

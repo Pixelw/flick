@@ -60,7 +60,6 @@ data class MusicModel(
 
     private fun getFirstPublish(): Long {
         var min = Long.MAX_VALUE
-        println(publishedAt.joinToString { ", " })
         for (aLong in publishedAt) {
             if (aLong == null) continue
             min = min(aLong, min)

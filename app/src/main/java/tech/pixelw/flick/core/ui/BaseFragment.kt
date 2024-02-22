@@ -28,7 +28,7 @@ abstract class BaseFragment<B : ViewDataBinding>(@LayoutRes open val layoutId: I
         if (usingBinding()) {
             binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
             require(this::binding.isInitialized) { "DataBindingUtil.inflate returns a null binding object" }
-            binding.lifecycleOwner = this
+            binding.lifecycleOwner = viewLifecycleOwner
             return binding.root
         }
         return inflater.inflate(layoutId, container, false)

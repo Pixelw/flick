@@ -9,6 +9,7 @@ import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -26,6 +27,8 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     private var initLoadJob: Job? = null
 
     private var startPlayJob: Job? = null
+
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
 
     override fun usingBinding() = true
 
@@ -45,7 +48,6 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
                 viewModel.musicModel.value = musicModel
                 // 待播放服务链接后再开始播放
             }
-
         }
     }
 
@@ -53,11 +55,16 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         super.onStart()
         // 链接到播放服务
         val token = SessionToken(requireContext(), ComponentName(requireContext(), MusicPlayService::class.java))
-        val controllerFuture = MediaController.Builder(requireContext(), token).buildAsync()
+        controllerFuture = MediaController.Builder(requireContext(), token).buildAsync()
         controllerFuture.addListener({
             player = controllerFuture.get()
             startPlaybackIfNeeded()
         }, MoreExecutors.directExecutor())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        MediaController.releaseFuture(controllerFuture)
     }
 
     private fun startPlaybackIfNeeded() {
@@ -67,7 +74,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
             viewModel.currentMediaId?.let {
                 val mediaItem = MusicPlaylistHelper.selectMediaItemById(it)
                 if (mediaItem != null && player != null) {
-                    MusicPlaylistHelper.bindPlayer(player!!)
+
                     player!!.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
                     player!!.prepare()
                     player!!.play()
