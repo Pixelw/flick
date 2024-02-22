@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -16,7 +17,6 @@ import kotlinx.coroutines.launch
 import tech.pixelw.flick.R
 import tech.pixelw.flick.core.ui.BaseFragment
 import tech.pixelw.flick.databinding.FragmentMusicPlayBinding
-import tech.pixelw.flick.feature.music.data.MusicListRepository
 
 class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragment_music_play) {
 
@@ -41,7 +41,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
             return
         }
         initLoadJob = lifecycleScope.launch {
-            val musicList = MusicListRepository.getMusicList(MusicListRepository.BANDORI_DEFAULT_PLAY_ROOT)
+            val musicList = MusicPlaylistHelper.getPlaylist()
             val musicModel = musicList.find { musicModel -> musicModel.mediaId == musicId }
             if (musicModel != null) {
                 viewModel.currentMediaId = musicId
@@ -58,8 +58,32 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         controllerFuture = MediaController.Builder(requireContext(), token).buildAsync()
         controllerFuture.addListener({
             player = controllerFuture.get()
+            playerAddListener()
             startPlaybackIfNeeded()
         }, MoreExecutors.directExecutor())
+    }
+
+    private fun playerAddListener() {
+        player!!.addListener(object : Player.Listener {
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                val mediaId = mediaItem?.mediaId
+                val model = MusicPlaylistHelper.getPlaylist().find { model -> mediaId == model.mediaId } ?: return
+                viewModel.musicModel.value = model
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+
+            }
+
+
+            override fun onEvents(player: Player, events: Player.Events) {
+
+            }
+        })
     }
 
     override fun onStop() {
@@ -69,17 +93,16 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
 
     private fun startPlaybackIfNeeded() {
         if (startPlayJob != null) return
+        if (viewModel.currentMediaId.isNullOrEmpty()) return
         startPlayJob = lifecycleScope.launch {
             initLoadJob?.join()
-            viewModel.currentMediaId?.let {
-                val mediaItem = MusicPlaylistHelper.selectMediaItemById(it)
-                if (mediaItem != null && player != null) {
-
-                    player!!.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
-                    player!!.prepare()
-                    player!!.play()
-                }
+            val mediaItem = MusicPlaylistHelper.selectMediaItemById(viewModel.currentMediaId!!)
+            if (mediaItem != null && player != null) {
+                player!!.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
+                player!!.prepare()
+                player!!.play()
             }
+
         }
     }
 }

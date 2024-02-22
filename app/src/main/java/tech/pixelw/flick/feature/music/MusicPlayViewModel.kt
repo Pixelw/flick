@@ -16,7 +16,6 @@ class MusicPlayViewModel : ViewModel() {
     val playPosition = MutableLiveData(PlayPosition(0, 0))
 
     fun nextOnClick(view: View) {
-
     }
 
     fun prevOnClick(view: View) {
