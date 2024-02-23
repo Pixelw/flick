@@ -1,17 +1,15 @@
 package tech.pixelw.flick.feature.music
 
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaLibraryInfo
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import tech.pixelw.flick.BuildConfig
-import tech.pixelw.flick.FlickApp
+import tech.pixelw.flick.core.media.ExoPlayerFactory
 
 class MusicPlayService : MediaSessionService() {
 
@@ -27,16 +25,12 @@ class MusicPlayService : MediaSessionService() {
     @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
-        val dataSource = DefaultHttpDataSource.Factory()
-            .setUserAgent(
-                "${FlickApp.appName}/${BuildConfig.VERSION_NAME} ${MediaLibraryInfo.VERSION_SLASHY} ${
-                    System.getProperty(
-                        "http.agent"
-                    )
-                }"
-            )
-        player = ExoPlayer.Builder(this).setMediaSourceFactory(DefaultMediaSourceFactory(dataSource)).build()
+        player = ExoPlayerFactory.get()
         player!!.addListener(playerListener)
+        player!!.setAudioAttributes(
+            AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).setUsage(C.USAGE_MEDIA)
+                .setAllowedCapturePolicy(C.ALLOW_CAPTURE_BY_NONE).build(), true
+        )
         mediaSession = MediaSession.Builder(this, player!!).build()
 
     }

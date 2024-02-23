@@ -95,9 +95,14 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    implementation("androidx.media3:media3-exoplayer:1.2.1")
-    implementation("androidx.media3:media3-common:1.2.1")
-    implementation("androidx.media3:media3-session:1.2.1")
+    val media3Version = "1.2.1"
+    implementation("androidx.media3:media3-exoplayer:$media3Version")
+    implementation("androidx.media3:media3-common:$media3Version")
+    implementation("androidx.media3:media3-session:$media3Version")
+    implementation("androidx.media3:media3-datasource-cronet:$media3Version")
+    implementation("com.google.android.gms:play-services-cronet:18.0.1")
+    implementation("org.chromium.net:cronet-api:119.6045.31")
+    implementation("com.google.net.cronet:cronet-okhttp:0.1.0")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:3.0-alpha-1")
 
