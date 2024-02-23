@@ -17,16 +17,19 @@ object BindingAdapters {
     @BindingAdapter("sliderCustomListener")
     fun setOnValueChangedListener(slider: Slider, onSlideChangedListener: OnSliderChangedListener) {
         val customListener = object : Slider.OnChangeListener, Slider.OnSliderTouchListener {
-            var value = 0f
+            private var value = 0f
             override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
+                // 只记录用户操作
                 if (fromUser) this.value = value
             }
 
             override fun onStartTrackingTouch(slider: Slider) {
-                onSlideChangedListener.onChanged(-1.11f)
+                // 需要在滑动时取消slider刷新, 所以设置一个负值
+                onSlideChangedListener.onChanged(-1.0f)
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
+                // 松手时再回调
                 onSlideChangedListener.onChanged(value)
             }
         }

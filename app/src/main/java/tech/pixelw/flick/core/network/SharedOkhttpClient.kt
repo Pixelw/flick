@@ -14,6 +14,9 @@ object SharedOkhttpClient {
 
     var preferCronet = true
 
+    /**
+     * 如果可用, 将会桥接至Cronet
+     */
     val DEFAULT: Call.Factory = getCallFactory()
 
     private fun getCallFactory(): Call.Factory {

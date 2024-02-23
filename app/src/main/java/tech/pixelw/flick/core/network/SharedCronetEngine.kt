@@ -8,7 +8,7 @@ import tech.pixelw.flick.FlickApp
 object SharedCronetEngine {
 
     var initSuccess = false
-    val DEFAULT = CronetEngine.Builder(FlickApp.context)
+    val DEFAULT: CronetEngine = CronetEngine.Builder(FlickApp.context)
         .setUserAgent(
             "${FlickApp.appName}/${BuildConfig.VERSION_NAME} Cronet/${ApiVersion.getCronetVersion()} (Default) ${
                 System.getProperty("http.agent")
