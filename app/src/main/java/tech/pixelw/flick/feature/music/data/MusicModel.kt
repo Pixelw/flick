@@ -12,8 +12,6 @@ import tech.pixelw.flick.common.resources.ResourceConfig
 import tech.pixelw.flick.common.resources.ResourceMapper
 import tech.pixelw.flick.common.resources.Urls
 import java.util.Calendar
-import java.util.Locale
-import java.util.TimeZone
 import kotlin.math.min
 
 @JsonClass(generateAdapter = true)
@@ -83,11 +81,14 @@ data class MusicModel(
     }
 
     fun toMediaItem(): MediaItem {
-        val calendar = Calendar.Builder()
-            .setInstant(getFirstPublish())
-            .setLocale(Locale.getDefault())
-            .setTimeZone(TimeZone.getDefault())
-            .build()
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = getFirstPublish()
+
+//        val calendar = Calendar.Builder()
+//            .setInstant(getFirstPublish())
+//            .setLocale(Locale.getDefault())
+//            .setTimeZone(TimeZone.getDefault())
+//            .build()
         val metaDataBuilder = MediaMetadata.Builder()
             .setTitle(musicTitle)
             .setArtist(getBandName())

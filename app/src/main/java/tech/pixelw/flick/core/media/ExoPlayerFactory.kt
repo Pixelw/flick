@@ -10,6 +10,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import tech.pixelw.flick.BuildConfig
 import tech.pixelw.flick.FlickApp
+import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.core.network.SharedCronetEngine
 import java.util.concurrent.Executors
 
@@ -19,7 +20,8 @@ class ExoPlayerFactory {
         @OptIn(UnstableApi::class)
         @JvmStatic
         fun get(): ExoPlayer {
-            val dataSource = if (SharedCronetEngine.initSuccess) {
+            LogUtil.d("SharedCronetEngine.initSuccess = ${SharedCronetEngine.initSuccess}")
+            val dataSource = if (SharedCronetEngine.initSuccess && SharedCronetEngine.DEFAULT != null) {
                 DefaultDataSource.Factory(
                     FlickApp.context,
                     CronetDataSource.Factory(SharedCronetEngine.DEFAULT, Executors.newSingleThreadExecutor())
