@@ -1,6 +1,7 @@
 package tech.pixelw.flick.core.network
 
 import com.google.net.cronet.okhttptransport.CronetCallFactory
+import okhttp3.Cache
 import okhttp3.Call
 import okhttp3.Interceptor
 import okhttp3.OkHttp
@@ -29,6 +30,7 @@ object SharedOkhttpClient {
         }
         val builder = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor("Default"))
+            .cache(Cache(FlickApp.context.cacheDir, 256 * 1024 * 1024))
         return builder.build()
     }
 

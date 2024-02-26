@@ -6,7 +6,6 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -29,6 +28,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     private var startPlayJob: Job? = null
 
     private lateinit var controllerFuture: ListenableFuture<MediaController>
+    private var stateHelper: MusicPlayerStateHelper? = null
 
     override fun usingBinding() = true
 
@@ -64,30 +64,15 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     }
 
     private fun playerAddListener() {
-        player!!.addListener(object : Player.Listener {
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                val mediaId = mediaItem?.mediaId
-                val model = MusicPlaylistHelper.getPlaylist().find { model -> mediaId == model.mediaId } ?: return
-                viewModel.musicModel.value = model
-            }
-
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-
-            }
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-
-            }
-
-
-            override fun onEvents(player: Player, events: Player.Events) {
-
-            }
-        })
+        player?.let {
+            stateHelper = MusicPlayerStateHelper(viewModel, it)
+            it.addListener(stateHelper!!)
+        }
     }
 
     override fun onStop() {
         super.onStop()
+        stateHelper?.let { player?.removeListener(it) }
         MediaController.releaseFuture(controllerFuture)
     }
 
