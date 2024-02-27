@@ -27,7 +27,7 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
 
     private var seekbarUpdateTask: TimerTask? = null
 
-    private val timer = Timer()
+    private var timer: Timer? = Timer()
 
     private fun newTimerTask() = timerTask {
         val position = playPosition.value!!
@@ -67,7 +67,7 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
         this.playPosition.value = (playPosition)
         seekbarUpdateTask?.cancel()
         seekbarUpdateTask = newTimerTask()
-        timer.scheduleAtFixedRate(seekbarUpdateTask, 0, POSITION_UPDATE_INTERVAL.toLong())
+        timer?.scheduleAtFixedRate(seekbarUpdateTask, 0, POSITION_UPDATE_INTERVAL.toLong())
     }
 
     fun seekBarPause(position: PlayPosition) {
@@ -77,6 +77,13 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
 
     override fun onStop(owner: LifecycleOwner) {
         seekbarUpdateTask?.cancel()
+    }
+
+    override fun onCleared() {
+        // timer
+        timer?.cancel()
+        timer?.purge()
+        timer = null
     }
 
 
