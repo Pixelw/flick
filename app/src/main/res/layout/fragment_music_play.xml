@@ -78,6 +78,7 @@
             tools:text="Roselia" />
 
         <TextView
+            android:lines="2"
             android:id="@+id/tv_music_credit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
