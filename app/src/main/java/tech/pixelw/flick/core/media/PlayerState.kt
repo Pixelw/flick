@@ -10,9 +10,9 @@ enum class PlayerState(key: Int) {
 
     PAUSED(3),
 
-    SKIPPING_TO_NEXT(4),
-
-    SKIPPING_TO_PREVIOUS(5),
+//    SKIPPING_TO_NEXT(4),
+//
+//    SKIPPING_TO_PREVIOUS(5),
 
     ENDED(6)
 

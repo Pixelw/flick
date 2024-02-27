@@ -9,6 +9,7 @@ import tech.pixelw.flick.core.media.PlayerState
 import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.feature.music.data.MusicModel
 import java.util.Timer
+import java.util.TimerTask
 import kotlin.concurrent.timerTask
 import kotlin.math.min
 
@@ -18,50 +19,64 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
 
     val musicModel = MutableLiveData<MusicModel>()
 
-    private val seekbarAction = MutableLiveData(0.0f)
-
     val playPosition = MutableLiveData(PlayPosition(0, 0))
 
-    val uiState = MutableLiveData(UiState(PlayerState.IDLE))
+    val uiState = MutableLiveData(PlayerState.IDLE)
+
+    val commandLiveData = MutableLiveData<Command>()
+
+    private var seekbarUpdateTask: TimerTask? = null
 
     private val timer = Timer()
 
-    private val seekbarUpdateTask = timerTask {
+    private fun newTimerTask() = timerTask {
         val position = playPosition.value!!
         position.setPosition(position.getPosition() + POSITION_UPDATE_INTERVAL)
-        playPosition.value = position
+        playPosition.postValue(position)
     }
 
     fun nextOnClick(view: View) {
-        uiState.value = UiState(PlayerState.SKIPPING_TO_NEXT, true)
+        commandLiveData.value = Command(Command.NEXT)
     }
 
     fun prevOnClick(view: View) {
-        uiState.value = UiState(PlayerState.SKIPPING_TO_PREVIOUS, true)
+        commandLiveData.value = Command(Command.PREVIOUS)
     }
 
     fun playPauseOnClick(view: View) {
-        uiState.value = when (uiState.value!!.state) {
+        when (uiState.value!!) {
             PlayerState.PLAYING -> {
-                UiState(PlayerState.PAUSED)
+                commandLiveData.value = Command(Command.PAUSE)
             }
 
             else -> {
-                UiState(PlayerState.PLAYING, true)
+                commandLiveData.value = Command(Command.PLAY)
             }
         }
     }
 
     fun onSliderChanged(float: Float) {
         if (float < 0f) {
-            seekbarUpdateTask.cancel()
+            seekbarUpdateTask?.cancel()
         } else if (float <= 1.0f) {
-            seekbarAction.value = float
+            commandLiveData.value = Command(Command.SEEK, float)
         }
     }
 
+    fun seekBarPlay(playPosition: PlayPosition) {
+        this.playPosition.value = (playPosition)
+        seekbarUpdateTask?.cancel()
+        seekbarUpdateTask = newTimerTask()
+        timer.scheduleAtFixedRate(seekbarUpdateTask, 0, POSITION_UPDATE_INTERVAL.toLong())
+    }
+
+    fun seekBarPause(position: PlayPosition) {
+        seekbarUpdateTask?.cancel()
+        playPosition.value = position
+    }
+
     override fun onStop(owner: LifecycleOwner) {
-        seekbarUpdateTask.cancel()
+        seekbarUpdateTask?.cancel()
     }
 
 
@@ -102,18 +117,20 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
             }
     }
 
+    data class Command(val kind: Int, val payload: Any? = null) {
+        companion object {
 
-    class UiState {
-        var state: PlayerState
-        var isUiTriggered = false
+            const val PLAY = 1
 
-        constructor(value: PlayerState) {
-            state = value
-        }
+            const val PAUSE = 2
 
-        constructor(state: PlayerState, isUiTriggered: Boolean) {
-            this.state = state
-            this.isUiTriggered = isUiTriggered
+            const val NEXT = 3
+
+            const val PREVIOUS = 4
+
+            const val SELECT_ITEM = 5
+
+            const val SEEK = 6
         }
     }
 

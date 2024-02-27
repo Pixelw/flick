@@ -49,6 +49,30 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
                 // 待播放服务链接后再开始播放
             }
         }
+        viewModel.commandLiveData.observe(viewLifecycleOwner) {
+            when (it?.kind) {
+                MusicPlayViewModel.Command.PLAY -> {
+                    player?.play()
+                }
+
+                MusicPlayViewModel.Command.PAUSE -> {
+                    player?.pause()
+                }
+
+                MusicPlayViewModel.Command.NEXT -> {
+                    player?.seekToNext()
+                }
+
+                MusicPlayViewModel.Command.PREVIOUS -> {
+                    player?.seekToPrevious()
+                }
+
+                MusicPlayViewModel.Command.SEEK -> {
+                    player?.seekTo((player!!.duration * it.payload as Float).toLong())
+                }
+
+            }
+        }
     }
 
     override fun onStart() {
@@ -60,7 +84,19 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
             player = controllerFuture.get()
             playerAddListener()
             startPlaybackIfNeeded()
+            refreshPlayState()
         }, MoreExecutors.directExecutor())
+    }
+
+    private fun refreshPlayState() {
+        if (player == null) return
+        viewModel.uiState.value = player!!.getPlayerState()
+        val playPosition = MusicPlayViewModel.PlayPosition(player!!.currentPosition, player!!.duration)
+        if (player!!.isPlaying) {
+            viewModel.seekBarPlay(playPosition)
+        } else {
+            viewModel.playPosition.value = playPosition
+        }
     }
 
     private fun playerAddListener() {
