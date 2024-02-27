@@ -12,6 +12,8 @@
         <import type="tech.pixelw.flick.common.resources.ResourceMapper" />
 
         <import type="android.text.format.DateUtils" />
+
+        <import type="tech.pixelw.flick.core.media.PlayerState" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,18 +44,22 @@
         </com.google.android.material.card.MaterialCardView>
 
 
-        <TextView
+        <tech.pixelw.flick.core.ui.AlwaysMarqueeTextView
             android:id="@+id/tv_music_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="16dp"
+            android:ellipsize="marquee"
+            android:maxLines="1"
             android:text="@{vm.musicModel.musicTitle}"
-            android:textAppearance="?textAppearanceDisplayLarge"
+            android:textAppearance="?textAppearanceHeadlineLarge"
             android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_music_subtitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_album_art"
-            tools:text="Song I am." />
+            app:layout_constraintTop_toBottomOf="@+id/card_album_art"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Song I am.\nR" />
 
         <TextView
             android:id="@+id/tv_music_subtitle"
@@ -64,9 +70,11 @@
             android:text="@{vm.musicModel.bandName}"
             android:textAppearance="?textAppearanceDisplayMedium"
             android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_music_credit"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_music_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_music_title"
             tools:text="Roselia" />
 
         <TextView
@@ -77,9 +85,11 @@
             android:layout_marginTop="8dp"
             android:text="@{vm.musicModel.descDisplay}"
             android:textAppearance="?textAppearanceLabelSmall"
+            app:layout_constraintBottom_toTopOf="@+id/ll_music_controllers"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_music_subtitle"
+            app:layout_constraintTop_toBottomOf="@+id/tv_music_subtitle"
             tools:text="Composer: Ryutaro Fujinaga (Elements Garden)" />
 
         <LinearLayout
@@ -89,9 +99,11 @@
             android:layout_marginTop="16dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/slider_player"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_music_credit">
+            app:layout_constraintTop_toBottomOf="@+id/tv_music_credit">
 
             <androidx.appcompat.widget.AppCompatImageButton
                 style="@style/BorderlessImageButtonStyle"
@@ -99,7 +111,7 @@
                 android:layout_height="36dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:onClick="@{vm::prevOnClick}"
-                android:src="@drawable/ic_round_skip_previous_24" />
+                android:src="@drawable/ic_player_round_skip_previous_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/play_pause"
@@ -108,7 +120,7 @@
                 android:layout_height="48dp"
                 android:layout_marginHorizontal="48dp"
                 android:onClick="@{vm::playPauseOnClick}"
-                android:src="@drawable/ic_round_play_circle_filled_24" />
+                android:src="@{vm.uiState == PlayerState.PLAYING ? @drawable/ic_player_pause_circle_filled_24: @drawable/ic_player_round_play_circle_filled_24}" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 style="@style/BorderlessImageButtonStyle"
@@ -116,7 +128,7 @@
                 android:layout_height="36dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:onClick="@{vm::nextOnClick}"
-                android:src="@drawable/ic_round_skip_next_24" />
+                android:src="@drawable/ic_player_round_skip_next_24" />
         </LinearLayout>
 
 
@@ -126,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="-4dp"
-            android:text="@{DateUtils.formatElapsedTime(vm.playPosition.position)}"
+            android:text="@{DateUtils.formatElapsedTime(vm.playPosition.position / 1000)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintStart_toStartOf="@id/slider_player"
             app:layout_constraintTop_toBottomOf="@id/slider_player"
@@ -138,7 +150,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="-4dp"
             android:layout_marginEnd="16dp"
-            android:text="@{DateUtils.formatElapsedTime(vm.playPosition.duration)}"
+            android:text="@{DateUtils.formatElapsedTime(vm.playPosition.duration / 1000)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintEnd_toEndOf="@id/slider_player"
             app:layout_constraintTop_toBottomOf="@id/slider_player"
@@ -151,7 +163,11 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/ll_music_controllers"
+            android:value="@{vm.playPosition.seekbarPos}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tv_play_position"
+            app:layout_constraintTop_toBottomOf="@+id/ll_music_controllers"
+            tools:layout_editor_absoluteX="16dp"
             tools:value="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
