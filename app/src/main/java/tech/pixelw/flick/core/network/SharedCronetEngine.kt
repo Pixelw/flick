@@ -15,7 +15,7 @@ object SharedCronetEngine {
     private fun getEngine(): CronetEngine? {
         try {
             LogUtil.d("getEngine() start")
-            CronetEngine.Builder(FlickApp.context)
+            return CronetEngine.Builder(FlickApp.context)
                 .setUserAgent(
                     "${FlickApp.appName}/${BuildConfig.VERSION_NAME} Cronet/${ApiVersion.getCronetVersion()} (Default) ${
                         System.getProperty("http.agent")
