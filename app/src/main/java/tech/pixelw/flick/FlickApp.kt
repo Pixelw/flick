@@ -34,7 +34,7 @@ class FlickApp : Application(), ImageLoaderFactory {
                     if (it.isSuccessful) {
                         SharedCronetEngine.initSuccess = true
                     }
-                    LogUtil.d("start first request")
+                    LogUtil.d("installProvider complete")
                     cont.resume(it.isSuccessful)
                 }
             }
