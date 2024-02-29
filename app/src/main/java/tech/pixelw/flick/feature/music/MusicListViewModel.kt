@@ -9,9 +9,10 @@ import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.feature.music.data.MusicListRepository
 import tech.pixelw.flick.feature.music.data.MusicModel
 
-class MusicListViewModel : ViewModel() {
+class MusicListViewModel : ViewModel(), MusicPlaylistHelper.Listener {
 
     val dataList = MutableLiveData<List<MusicModel>>(emptyList())
+    val currentPlayIndex = MutableLiveData(0)
 
     fun loadData() {
         viewModelScope.launch {
@@ -25,10 +26,19 @@ class MusicListViewModel : ViewModel() {
             }
 
         }
+        MusicPlaylistHelper.addListener(this)
     }
 
     fun preparePlaylist() {
         MusicPlaylistHelper.setPlaylist(dataList.value!!)
     }
 
+    override fun onPlayIndexChanged(playIndex: Int, musicModel: MusicModel?) {
+        currentPlayIndex.value = playIndex
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        MusicPlaylistHelper.removeListener(this)
+    }
 }

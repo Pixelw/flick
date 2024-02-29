@@ -23,8 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import tech.pixelw.flick.R
 import tech.pixelw.flick.core.ui.theme.FlickTheme
 import tech.pixelw.flick.feature.music.data.MusicModel
@@ -51,6 +54,7 @@ class MusicListActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Column(Modifier.fillMaxSize()) {
                         val musicList by viewModel.dataList.observeAsState()
+                        val currentIndex by viewModel.currentPlayIndex.observeAsState(0)
                         if (!musicList.isNullOrEmpty()) {
                             MusicList(musicList!!, onClick = {
                                 viewModel.preparePlaylist()
@@ -58,7 +62,9 @@ class MusicListActivity : ComponentActivity() {
                                     putExtra(MusicPlayActivity.K_MUSIC_ID, it.mediaId)
                                 })
                             }, modifier = Modifier.weight(1f))
-                            SwipeMusicBar(list = musicList!!, currentIndex = 0)
+                            SwipeMusicBar(list = musicList!!, currentIndex = currentIndex) {
+                                startActivity(Intent(this@MusicListActivity, MusicPlayActivity::class.java))
+                            }
                         }
 
                     }
@@ -73,25 +79,29 @@ class MusicListActivity : ComponentActivity() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SwipeMusicBar(list: List<MusicModel>, currentIndex: Int) {
+fun SwipeMusicBar(list: List<MusicModel>, currentIndex: Int, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(6.dp)
             .wrapContentHeight(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
+        onClick = onClick
     ) {
         val state = rememberPagerState(pageCount = { list.size })
         HorizontalPager(state = state) { index ->
             val model = list[index]
             MusicPlayingBar(title = model.musicTitle ?: "???", artist = model.getBandName(), imgUrl = model.getSongArtUrl())
         }
-//    LaunchedEffect(){
+        val rememberCoroutineScope = rememberCoroutineScope()
+        LaunchedEffect(currentIndex) {
+            rememberCoroutineScope.launch {
+                state.scrollToPage(currentIndex)
+            }
+//            snapshotFlow { state.settledPage }.collect { page ->
 //
-//    }
-//    scope.launch {
-//        state.scrollToPage(currentIndex)
-//    }
+//            }
+        }
     }
 }
 
