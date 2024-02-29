@@ -31,6 +31,7 @@ abstract class BaseFragment<B : ViewDataBinding>(@LayoutRes open val layoutId: I
             binding.lifecycleOwner = viewLifecycleOwner
             return binding.root
         }
+        lifecycle.addObserver(LifecycleLogger)
         return inflater.inflate(layoutId, container, false)
     }
 

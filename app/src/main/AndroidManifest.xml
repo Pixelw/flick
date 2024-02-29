@@ -17,13 +17,14 @@
         android:theme="@style/Theme.Flick"
         tools:targetApi="31">
         <activity
+            android:screenOrientation="portrait"
             android:name=".feature.music.MusicPlayActivity"
-            android:exported="false" />
+            android:exported="true"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".feature.music.MusicListActivity"
             android:exported="true"
-            android:label="@string/title_activity_music_list"
-            android:theme="@style/Theme.Flick">
+            android:label="@string/title_activity_music_list">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

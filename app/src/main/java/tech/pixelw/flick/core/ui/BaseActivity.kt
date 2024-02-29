@@ -33,7 +33,7 @@ abstract class BaseActivity<B : ViewDataBinding> : AppCompatActivity() {
                 add(R.id.fragment_container_view, mainFragment!!)
             }
         }
-        LogUtil.d(TAG, "BaseActivity onCreate finish")
+        LogUtil.d(tag = TAG, msg = "BaseActivity onCreate finish")
         onCreate()
     }
 

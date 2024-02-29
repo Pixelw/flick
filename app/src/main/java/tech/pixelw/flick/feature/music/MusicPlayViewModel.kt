@@ -15,8 +15,6 @@ import kotlin.math.min
 
 class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
 
-    var currentMediaId: String? = null
-
     val musicModel = MutableLiveData<MusicModel>()
 
     val playPosition = MutableLiveData(PlayPosition(0, 0))

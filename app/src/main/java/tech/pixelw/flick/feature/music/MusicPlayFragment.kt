@@ -11,9 +11,9 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import tech.pixelw.flick.R
+import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.core.ui.BaseFragment
 import tech.pixelw.flick.databinding.FragmentMusicPlayBinding
 
@@ -23,9 +23,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
 
     private var player: Player? = null
 
-    private var initLoadJob: Job? = null
-
-    private var startPlayJob: Job? = null
+    private var pendingStartMediaId: String? = null
 
     private lateinit var controllerFuture: ListenableFuture<MediaController>
     private var stateHelper: MusicPlayerStateHelper? = null
@@ -35,20 +33,13 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.vm = viewModel
-        val musicId = intent?.getStringExtra(MusicPlayActivity.K_MUSIC_ID)
-        if (musicId == null) {
-            activity?.finish()
-            return
+        lifecycle.addObserver(viewModel)
+        pendingStartMediaId = intent?.getStringExtra(MusicPlayActivity.K_MUSIC_ID)
+        pendingStartMediaId?.let {
+            binding.cpiLoading.visibility = View.VISIBLE
+            binding.cpiLoading.isEnabled
         }
-        initLoadJob = lifecycleScope.launch {
-            val musicList = MusicPlaylistHelper.getPlaylist()
-            val musicModel = musicList.find { musicModel -> musicModel.mediaId == musicId }
-            if (musicModel != null) {
-                viewModel.currentMediaId = musicId
-                viewModel.musicModel.value = musicModel
-                // 待播放服务链接后再开始播放
-            }
-        }
+
         viewModel.commandLiveData.observe(viewLifecycleOwner) {
             when (it?.kind) {
                 MusicPlayViewModel.Command.PLAY -> {
@@ -81,11 +72,23 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         val token = SessionToken(requireContext(), ComponentName(requireContext(), MusicPlayService::class.java))
         controllerFuture = MediaController.Builder(requireContext(), token).buildAsync()
         controllerFuture.addListener({
+            // 服务已连接后
             player = controllerFuture.get()
+            if (player == null) {
+                LogUtil.e("Player is null!", TAG)
+                return@addListener
+            }
             playerAddListener()
-            startPlaybackIfNeeded()
+            startPlaybackOrGetNowPlaying()
             refreshPlayState()
         }, MoreExecutors.directExecutor())
+    }
+
+    private fun playerAddListener() {
+        player?.let {
+            stateHelper = MusicPlayerStateHelper(viewModel, it)
+            it.addListener(stateHelper!!)
+        }
     }
 
     private fun refreshPlayState() {
@@ -99,11 +102,23 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         }
     }
 
-    private fun playerAddListener() {
-        player?.let {
-            stateHelper = MusicPlayerStateHelper(viewModel, it)
-            it.addListener(stateHelper!!)
+    private fun startPlaybackOrGetNowPlaying() {
+        if (pendingStartMediaId.isNullOrEmpty()) {
+            MusicPlaylistHelper.getCurrentMusicModel()?.let {
+                viewModel.musicModel.value = it
+            }
+        } else {
+            lifecycleScope.launch {
+                val musicModel = MusicPlaylistHelper.selectMusicById(pendingStartMediaId!!)
+                if (musicModel != null) {
+                    viewModel.musicModel.value = musicModel
+                    player!!.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
+                    player!!.prepare()
+                    player!!.play()
+                }
+            }
         }
+
     }
 
     override fun onStop() {
@@ -112,18 +127,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         MediaController.releaseFuture(controllerFuture)
     }
 
-    private fun startPlaybackIfNeeded() {
-        if (startPlayJob != null) return
-        if (viewModel.currentMediaId.isNullOrEmpty()) return
-        startPlayJob = lifecycleScope.launch {
-            initLoadJob?.join()
-            val mediaItem = MusicPlaylistHelper.selectMediaItemById(viewModel.currentMediaId!!)
-            if (mediaItem != null && player != null) {
-                player!!.setMediaItems(MusicPlaylistHelper.getMediaItemList(), MusicPlaylistHelper.playIndex, C.TIME_UNSET)
-                player!!.prepare()
-                player!!.play()
-            }
-
-        }
+    companion object {
+        private const val TAG = "MusicPlayFragment"
     }
 }

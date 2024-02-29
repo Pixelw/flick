@@ -50,15 +50,28 @@ object MusicPlaylistHelper {
     }
 
     fun selectMediaItemById(mediaId: String): MediaItem? {
+        return selectMusicById(mediaId)?.cachedOrConvertMediaItem()
+    }
+
+    fun selectMusicById(mediaId: String): MusicModel? {
         for (i in playList.indices) {
             val model = playList[i]
             if (model.mediaId == mediaId) {
                 playIndex = i
-                return model.cachedOrConvertMediaItem()
+                return model
             }
         }
         LogUtil.w("mediaId: $mediaId not found", TAG)
         return null
+    }
+
+    fun getCurrentMusicModel(): MusicModel? {
+        if (playList.isEmpty() || playIndex < 0) return null
+        return playList[playIndex]
+    }
+
+    fun getCurrentMediaItem(): MediaItem? {
+        return getCurrentMusicModel()?.cachedOrConvertMediaItem()
     }
 
     fun getMediaItemList(): List<MediaItem> {

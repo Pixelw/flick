@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import tech.pixelw.flick.core.media.PlayerState
+import tech.pixelw.flick.core.misc.LogUtil
 
 class MusicPlayerStateHelper(private val viewModel: MusicPlayViewModel, private val player: Player) : Player.Listener {
 
@@ -11,26 +12,25 @@ class MusicPlayerStateHelper(private val viewModel: MusicPlayViewModel, private 
         Log.d(TAG, "onMediaItemTransition() called with: mediaItem = $mediaItem, reason = $reason")
         super.onMediaItemTransition(mediaItem, reason)
         val mediaId = mediaItem?.mediaId
-        val model = MusicPlaylistHelper.getPlaylist().find { model -> mediaId == model.mediaId } ?: return
-        viewModel.musicModel.value = model
-
-//        viewModel.uiState.
+        mediaId?.let {
+            viewModel.musicModel.value = MusicPlaylistHelper.selectMusicById(it)
+        }
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         Log.d(TAG, "onIsPlayingChanged() called with: isPlaying = $isPlaying")
-        val state = if (!isPlaying) {
+        if (!isPlaying) {
             if (player.playbackState == Player.STATE_READY) {
                 viewModel.seekBarPause(MusicPlayViewModel.PlayPosition(player.currentPosition, player.duration))
-                PlayerState.PAUSED
-            } else {
-                PlayerState.ENDED
+                edit(PlayerState.PAUSED)
+            } else if (player.playbackState == Player.STATE_ENDED) {
+                edit(PlayerState.ENDED)
             }
         } else {
             viewModel.seekBarPlay(MusicPlayViewModel.PlayPosition(player.currentPosition, player.duration))
-            PlayerState.PLAYING
+            edit(PlayerState.PLAYING)
         }
-        edit(state)
+
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
@@ -55,6 +55,7 @@ class MusicPlayerStateHelper(private val viewModel: MusicPlayViewModel, private 
     }
 
     private fun edit(playerState: PlayerState) {
+        LogUtil.d("playerstate edit: $playerState", TAG)
         viewModel.uiState.value = playerState
     }
 

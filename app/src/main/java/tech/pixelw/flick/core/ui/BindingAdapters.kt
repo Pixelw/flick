@@ -1,8 +1,10 @@
 package tech.pixelw.flick.core.ui
 
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import coil.load
+import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.slider.Slider
 
 
@@ -11,6 +13,26 @@ object BindingAdapters {
     @BindingAdapter("coilSrc")
     fun coilSrc(imageView: ImageView, url: String?) {
         imageView.load(url)
+    }
+
+    @JvmStatic
+    @BindingAdapter("showWhen", "isGone", requireAll = true)
+    fun setVisibility(view: View, isShow: Boolean, isGone: Boolean) {
+        view.visibility = when {
+            isShow -> View.VISIBLE
+            isGone -> View.GONE
+            else -> View.INVISIBLE
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("pgShowWhen")
+    fun setVisibility(progressIndicator: BaseProgressIndicator<*>, isShow: Boolean) {
+        if (isShow) {
+            progressIndicator.show()
+        } else {
+            progressIndicator.hide()
+        }
     }
 
     @JvmStatic
