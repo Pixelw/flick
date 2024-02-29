@@ -83,12 +83,6 @@ data class MusicModel(
     fun toMediaItem(): MediaItem {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = getFirstPublish()
-
-//        val calendar = Calendar.Builder()
-//            .setInstant(getFirstPublish())
-//            .setLocale(Locale.getDefault())
-//            .setTimeZone(TimeZone.getDefault())
-//            .build()
         val metaDataBuilder = MediaMetadata.Builder()
             .setTitle(musicTitle)
             .setArtist(getBandName())

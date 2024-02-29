@@ -10,12 +10,13 @@ object SharedCronetEngine {
 
     var initSuccess = false
 
-    val DEFAULT: CronetEngine? = getEngine()
+    private var default: CronetEngine? = null
 
-    private fun getEngine(): CronetEngine? {
+    fun getEngine(): CronetEngine? {
         try {
+            if (default != null) return default
             LogUtil.d("getEngine() start")
-            return CronetEngine.Builder(FlickApp.context)
+            default = CronetEngine.Builder(FlickApp.context)
                 .setUserAgent(
                     "${FlickApp.appName}/${BuildConfig.VERSION_NAME} Cronet/${ApiVersion.getCronetVersion()} (Default) ${
                         System.getProperty("http.agent")
@@ -24,6 +25,7 @@ object SharedCronetEngine {
                 .setStoragePath(FlickApp.context.cacheDir.absolutePath)
                 .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK, 256 * 1024 * 1024)
                 .build()
+            return default
         } catch (t: Throwable) {
             LogUtil.w("getEngine() failed", t, TAG)
         }

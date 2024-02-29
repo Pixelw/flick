@@ -52,10 +52,12 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
 
                 MusicPlayViewModel.Command.NEXT -> {
                     player?.seekToNext()
+                    player?.play()
                 }
 
                 MusicPlayViewModel.Command.PREVIOUS -> {
                     player?.seekToPrevious()
+                    player?.play()
                 }
 
                 MusicPlayViewModel.Command.SEEK -> {
@@ -85,10 +87,8 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     }
 
     private fun playerAddListener() {
-        player?.let {
-            stateHelper = MusicPlayerStateHelper(viewModel, it)
-            it.addListener(stateHelper!!)
-        }
+        stateHelper = MusicPlayerStateHelper(viewModel, player!!)
+        player!!.addListener(stateHelper!!)
     }
 
     private fun refreshPlayState() {
@@ -98,7 +98,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         if (player!!.isPlaying) {
             viewModel.seekBarPlay(playPosition)
         } else {
-            viewModel.playPosition.value = playPosition
+            viewModel.seekBarPause(playPosition)
         }
     }
 

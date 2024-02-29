@@ -21,10 +21,10 @@ class ExoPlayerFactory {
         @JvmStatic
         fun get(): ExoPlayer {
             LogUtil.d("SharedCronetEngine.initSuccess = ${SharedCronetEngine.initSuccess}")
-            val dataSource = if (SharedCronetEngine.initSuccess && SharedCronetEngine.DEFAULT != null) {
+            val dataSource = if (SharedCronetEngine.initSuccess && SharedCronetEngine.getEngine() != null) {
                 DefaultDataSource.Factory(
                     FlickApp.context,
-                    CronetDataSource.Factory(SharedCronetEngine.DEFAULT, Executors.newSingleThreadExecutor())
+                    CronetDataSource.Factory(SharedCronetEngine.getEngine()!!, Executors.newSingleThreadExecutor())
                 )
             } else {
                 DefaultHttpDataSource.Factory()

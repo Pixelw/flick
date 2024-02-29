@@ -15,13 +15,18 @@ class MusicPlayerStateHelper(private val viewModel: MusicPlayViewModel, private 
         mediaId?.let {
             viewModel.musicModel.value = MusicPlaylistHelper.selectMusicById(it)
         }
+        if (player.duration > 500) {
+            viewModel.seekBarPlay(MusicPlayViewModel.PlayPosition(player.currentPosition, player.duration))
+        } else {
+            viewModel.seekBarPause(MusicPlayViewModel.PlayPosition(player.currentPosition, player.duration))
+        }
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         Log.d(TAG, "onIsPlayingChanged() called with: isPlaying = $isPlaying")
         if (!isPlaying) {
+            viewModel.seekBarPause(MusicPlayViewModel.PlayPosition(player.currentPosition, player.duration))
             if (player.playbackState == Player.STATE_READY) {
-                viewModel.seekBarPause(MusicPlayViewModel.PlayPosition(player.currentPosition, player.duration))
                 edit(PlayerState.PAUSED)
             } else if (player.playbackState == Player.STATE_ENDED) {
                 edit(PlayerState.ENDED)
