@@ -1,5 +1,6 @@
 package tech.pixelw.flick.feature.music
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -27,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,7 +39,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import coil.compose.AsyncImage
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import tech.pixelw.flick.R
 import tech.pixelw.flick.core.ui.theme.FlickTheme
@@ -46,6 +55,10 @@ import tech.pixelw.flick.feature.music.data.MusicModel
 class MusicListActivity : ComponentActivity() {
 
     private val viewModel by viewModels<MusicListViewModel>()
+
+    private var player: Player? = null
+
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -62,9 +75,13 @@ class MusicListActivity : ComponentActivity() {
                                     putExtra(MusicPlayActivity.K_MUSIC_ID, it.mediaId)
                                 })
                             }, modifier = Modifier.weight(1f))
-                            SwipeMusicBar(list = musicList!!, currentIndex = currentIndex) {
-                                startActivity(Intent(this@MusicListActivity, MusicPlayActivity::class.java))
-                            }
+                            SwipeMusicBar(
+                                list = musicList!!,
+                                currentIndex = currentIndex,
+                                onPageChanged = { player?.seekToDefaultPosition(it) },
+                                onClick = {
+                                    startActivity(Intent(this@MusicListActivity, MusicPlayActivity::class.java))
+                                })
                         }
 
                     }
@@ -74,12 +91,29 @@ class MusicListActivity : ComponentActivity() {
         }
         viewModel.loadData()
     }
+
+    override fun onStart() {
+        super.onStart()
+        // 链接到播放服务
+        val token = SessionToken(this, ComponentName(this, MusicPlayService::class.java))
+        controllerFuture = MediaController.Builder(this, token).buildAsync()
+        controllerFuture.addListener({
+            // 服务已连接后
+            player = controllerFuture.get()
+        }, MoreExecutors.directExecutor())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        player = null
+        MediaController.releaseFuture(controllerFuture)
+    }
 }
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SwipeMusicBar(list: List<MusicModel>, currentIndex: Int, onClick: () -> Unit) {
+fun SwipeMusicBar(list: List<MusicModel>, currentIndex: Int, onClick: () -> Unit, onPageChanged: (Int) -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,9 +132,10 @@ fun SwipeMusicBar(list: List<MusicModel>, currentIndex: Int, onClick: () -> Unit
             rememberCoroutineScope.launch {
                 state.scrollToPage(currentIndex)
             }
-//            snapshotFlow { state.settledPage }.collect { page ->
-//
-//            }
+            snapshotFlow { state.settledPage }.flowOn(Dispatchers.Main).collect { page ->
+                if (MusicPlaylistHelper.playIndex == page) return@collect
+                onPageChanged(page)
+            }
         }
     }
 }

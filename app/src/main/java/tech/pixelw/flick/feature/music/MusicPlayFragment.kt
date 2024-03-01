@@ -116,6 +116,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
                     player!!.prepare()
                     player!!.play()
                 }
+                pendingStartMediaId = null
             }
         }
 
@@ -124,6 +125,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     override fun onStop() {
         super.onStop()
         stateHelper?.let { player?.removeListener(it) }
+        player = null
         MediaController.releaseFuture(controllerFuture)
     }
 

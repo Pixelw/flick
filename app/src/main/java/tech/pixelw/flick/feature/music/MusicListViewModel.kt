@@ -27,6 +27,9 @@ class MusicListViewModel : ViewModel(), MusicPlaylistHelper.Listener {
 
         }
         MusicPlaylistHelper.addListener(this)
+        if (MusicPlaylistHelper.playIndex > -1) {
+            currentPlayIndex.value = MusicPlaylistHelper.playIndex
+        }
     }
 
     fun preparePlaylist() {

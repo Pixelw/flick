@@ -43,26 +43,18 @@ class MusicPlayService : MediaSessionService() {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
         ).build()
-//        setMediaNotificationProvider(object : MediaNotification.Provider{
-//            override fun createNotification(
-//                mediaSession: MediaSession,
-//                customLayout: ImmutableList<CommandButton>,
-//                actionFactory: MediaNotification.ActionFactory,
-//                onNotificationChangedCallback: MediaNotification.Provider.Callback
-//            ): MediaNotification {
-//                TODO("Not yet implemented")
-//            }
-//
-//            override fun handleCustomCommand(session: MediaSession, action: String, extras: Bundle): Boolean {
-//                TODO("Not yet implemented")
-//            }
-//
-//        })
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
 //        if (controllerInfo.packageName != BuildConfig.APPLICATION_ID) return null
         return mediaSession
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        val player = mediaSession?.player!!
+        if (!player.playWhenReady || player.mediaItemCount == 0) {
+            stopSelf()
+        }
     }
 
     override fun onDestroy() {
