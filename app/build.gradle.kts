@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
     id("kotlin-kapt")
+    id("com.google.relay") version "0.3.11"
 }
 
 android {

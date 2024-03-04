@@ -35,11 +35,6 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
         binding.vm = viewModel
         lifecycle.addObserver(viewModel)
         pendingStartMediaId = intent?.getStringExtra(MusicPlayActivity.K_MUSIC_ID)
-        pendingStartMediaId?.let {
-            binding.cpiLoading.visibility = View.VISIBLE
-            binding.cpiLoading.isEnabled
-        }
-
         viewModel.commandLiveData.observe(viewLifecycleOwner) {
             when (it?.kind) {
                 MusicPlayViewModel.Command.PLAY -> {
