@@ -17,7 +17,7 @@ object NetApiFactory {
         } else {
             val create = Retrofit.Builder()
                 .callFactory(SharedOkhttpClient.DEFAULT)
-                .addConverterFactory(MoshiConverter.DEFAULT)
+                .addConverterFactory(MoshiConverterFactory.DEFAULT)
                 .baseUrl(baseUrl)
                 .build()
                 .create(api)

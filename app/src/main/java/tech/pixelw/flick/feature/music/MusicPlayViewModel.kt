@@ -29,7 +29,7 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
 
     private fun newTimerTask() = timerTask {
         val position = playPosition.value!!
-        position.setPosition(position.getPosition() + POSITION_UPDATE_INTERVAL)
+        position.setPositionSafe(position.position + POSITION_UPDATE_INTERVAL)
         playPosition.postValue(position)
     }
 
@@ -61,11 +61,11 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
         }
     }
 
-    fun seekBarPlay(playPosition: PlayPosition) {
-        this.playPosition.value = (playPosition)
+    fun seekBarPlay(position: PlayPosition) {
+        this.playPosition.value = position
         seekbarUpdateTask?.cancel()
         seekbarUpdateTask = newTimerTask()
-        timer?.scheduleAtFixedRate(seekbarUpdateTask, 0, POSITION_UPDATE_INTERVAL.toLong())
+        timer?.scheduleAtFixedRate(seekbarUpdateTask, 0, POSITION_UPDATE_INTERVAL)
     }
 
     fun seekBarPause(position: PlayPosition) {
@@ -85,38 +85,35 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
     }
 
 
-    class PlayPosition {
-        val duration: Int
+    data class PlayPosition(private var _position: Long, private val _duration: Long) {
 
-        // millis
-        private var position: Int
-
-        constructor(position: Int, duration: Int) {
-            this.position = position
-            this.duration = duration
+        init {
+            LogUtil.w(toString())
         }
 
-        constructor(position: Long, duration: Long) {
-            this.duration = duration.toInt()
-            this.position = position.toInt()
-        }
+        val position: Long get() = _position
+        val duration: Long
+            get() {
+                return if (_duration < 0) 0L
+                else _duration
+            }
 
-        fun getPosition(): Int {
-            return position
-        }
+        fun getPositionSec(): Int = (_position / 1000).toInt()
 
-        fun setPosition(position: Int) {
+        fun getDurationSec(): Int = (duration / 1000).toInt()
+
+        fun setPositionSafe(position: Long) {
             var position1 = position
             if (position1 > duration) {
                 LogUtil.w("position out of bounds")
                 position1 = duration
             }
-            this.position = position1
+            this._position = position1
         }
 
         val seekbarPos: Float
             get() {
-                if (duration == 0) return 0.0f
+                if (duration == 0L) return 0.0f
                 val v = position.toFloat() / duration.toFloat()
                 return min(v, 1.0f)
             }
@@ -140,7 +137,7 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
     }
 
     companion object {
-        const val POSITION_UPDATE_INTERVAL = 250
+        const val POSITION_UPDATE_INTERVAL = 250L
     }
 
 }

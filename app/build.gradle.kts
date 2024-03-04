@@ -89,18 +89,26 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     // extra
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("io.coil-kt:coil:2.5.0")
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    val retrofitVersion = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+
+    val coilVersion = "2.5.0"
+    implementation("io.coil-kt:coil:$coilVersion")
+    implementation("io.coil-kt:coil-compose:$coilVersion")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+
+    val moshiVersion = "1.15.0"
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
+    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
+    implementation("com.squareup.moshi:moshi:$moshiVersion")
+
     val media3Version = "1.2.1"
     implementation("androidx.media3:media3-exoplayer:$media3Version")
     implementation("androidx.media3:media3-common:$media3Version")
     implementation("androidx.media3:media3-session:$media3Version")
     implementation("androidx.media3:media3-datasource-cronet:$media3Version")
+
     implementation("com.google.android.gms:play-services-cronet:18.0.1")
     implementation("org.chromium.net:cronet-api:119.6045.31")
     implementation("com.google.net.cronet:cronet-okhttp:0.1.0")
