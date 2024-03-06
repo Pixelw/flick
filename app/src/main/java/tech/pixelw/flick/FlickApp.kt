@@ -7,6 +7,7 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.request.CachePolicy
 import com.google.android.gms.net.CronetProviderInstaller
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -22,22 +23,26 @@ class FlickApp : Application(), ImageLoaderFactory {
         lateinit var context: Context
         lateinit var appName: String
         var startCronetInitJob: Job? = null
+            private set
     }
 
     override fun onCreate() {
         context = applicationContext
         super.onCreate()
         appName = context.getString(R.string.app_name)
-        startCronetInitJob = MainScope().launch {
+        startCronetInitJob = MainScope().launch(Dispatchers.Default) {
+            LogUtil.d("installProvider start", "CronetInit")
+            val startMillis = System.currentTimeMillis()
             suspendCancellableCoroutine<Boolean> { cont ->
                 CronetProviderInstaller.installProvider(context).addOnCompleteListener {
                     if (it.isSuccessful) {
                         SharedCronetEngine.initSuccess = true
                     }
-                    LogUtil.d("installProvider complete")
+                    LogUtil.d("installProvider complete, successful=${it.isSuccessful}", "CronetInit")
                     cont.resume(it.isSuccessful)
                 }
             }
+            LogUtil.d("installProvider complete, costs ${System.currentTimeMillis() - startMillis}ms", "CronetInit")
         }
 
 

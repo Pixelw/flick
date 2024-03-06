@@ -39,6 +39,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -48,6 +49,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.R
 import tech.pixelw.flick.core.ui.theme.FlickTheme
 import tech.pixelw.flick.feature.music.data.MusicModel
@@ -95,12 +97,16 @@ class MusicListActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         // 链接到播放服务
-        val token = SessionToken(this, ComponentName(this, MusicPlayService::class.java))
-        controllerFuture = MediaController.Builder(this, token).buildAsync()
-        controllerFuture.addListener({
-            // 服务已连接后
-            player = controllerFuture.get()
-        }, MoreExecutors.directExecutor())
+        lifecycleScope.launch {
+            FlickApp.startCronetInitJob?.join()
+            val token =
+                SessionToken(this@MusicListActivity, ComponentName(this@MusicListActivity, MusicPlayService::class.java))
+            controllerFuture = MediaController.Builder(this@MusicListActivity, token).buildAsync()
+            controllerFuture.addListener({
+                // 服务已连接后
+                player = controllerFuture.get()
+            }, MoreExecutors.directExecutor())
+        }
     }
 
     override fun onStop() {
