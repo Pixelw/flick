@@ -12,7 +12,7 @@ import tech.pixelw.flick.feature.music.data.MusicModel
 class MusicListViewModel : ViewModel(), MusicPlaylistHelper.Listener {
 
     val dataList = MutableLiveData<List<MusicModel>>(emptyList())
-    val currentPlayIndex = MutableLiveData(0)
+    val currentPlayIndex = MutableLiveData(-1)
 
     fun loadData() {
         viewModelScope.launch {

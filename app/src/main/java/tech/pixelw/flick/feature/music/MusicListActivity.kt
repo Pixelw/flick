@@ -60,7 +60,7 @@ class MusicListActivity : ComponentActivity() {
 
     private var player: Player? = null
 
-    private lateinit var controllerFuture: ListenableFuture<MediaController>
+    private var controllerFuture: ListenableFuture<MediaController>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -77,6 +77,8 @@ class MusicListActivity : ComponentActivity() {
                                     putExtra(MusicPlayActivity.K_MUSIC_ID, it.mediaId)
                                 })
                             }, modifier = Modifier.weight(1f))
+                        }
+                        if (currentIndex >= 0) {
                             SwipeMusicBar(
                                 list = musicList!!,
                                 currentIndex = currentIndex,
@@ -96,15 +98,17 @@ class MusicListActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        // 未播放时不连接
+        if (viewModel.currentPlayIndex.value!! < 0) return
         // 链接到播放服务
         lifecycleScope.launch {
             FlickApp.startCronetInitJob?.join()
             val token =
                 SessionToken(this@MusicListActivity, ComponentName(this@MusicListActivity, MusicPlayService::class.java))
             controllerFuture = MediaController.Builder(this@MusicListActivity, token).buildAsync()
-            controllerFuture.addListener({
+            controllerFuture?.addListener({
                 // 服务已连接后
-                player = controllerFuture.get()
+                player = controllerFuture?.get()
             }, MoreExecutors.directExecutor())
         }
     }
@@ -112,7 +116,7 @@ class MusicListActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         player = null
-        MediaController.releaseFuture(controllerFuture)
+        controllerFuture?.let { MediaController.releaseFuture(it) }
     }
 }
 
