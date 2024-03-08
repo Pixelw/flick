@@ -2,6 +2,7 @@ package tech.pixelw.flick.feature.music
 
 import android.content.ComponentName
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -33,6 +34,9 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.vm = viewModel
+        binding.sliderPlayer.setLabelFormatter { value ->
+            DateUtils.formatElapsedTime(((viewModel.playPosition.value?.duration ?: 0L) * value).toLong() / 1000)
+        }
         lifecycle.addObserver(viewModel)
         pendingStartMediaId = intent?.getStringExtra(MusicPlayActivity.K_MUSIC_ID)
         viewModel.commandLiveData.observe(viewLifecycleOwner) {
