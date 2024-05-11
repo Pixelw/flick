@@ -51,8 +51,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.R
-import tech.pixelw.flick.core.ui.theme.FlickTheme
 import tech.pixelw.flick.feature.music.data.MusicModel
+import tech.pixelw.flick.theme.FlickTheme
 
 class MusicListActivity : ComponentActivity() {
 
