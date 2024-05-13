@@ -115,6 +115,7 @@ dependencies {
     implementation("com.google.net.cronet:cronet-okhttp:0.1.0")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:3.0-alpha-1")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // test
     testImplementation("junit:junit:4.13.2")

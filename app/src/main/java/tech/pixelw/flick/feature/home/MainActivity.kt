@@ -18,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
+import tech.pixelw.flick.feature.home.composables.MainContentFrame
 import tech.pixelw.flick.feature.home.composables.MainNavDrawer
 import tech.pixelw.flick.theme.FlickTheme
 
@@ -34,6 +35,8 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val drawerOpen by viewModel.drawerOpened.collectAsState()
+                    val currentTitleModel by viewModel.currentTitleModel.collectAsState()
+                    viewModel.getPreferScreen(this@MainActivity)
                     if (drawerOpen) {
                         LaunchedEffect(Unit) {
                             // Open drawer and reset state in VM.
@@ -56,7 +59,9 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     MainNavDrawer(drawerState = drawerState) {
+                        MainContentFrame(title = currentTitleModel!!.title) {
 
+                        }
                     }
                 }
             }
