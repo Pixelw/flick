@@ -16,8 +16,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
+import tech.pixelw.flick.databinding.ContentMainBinding
 import tech.pixelw.flick.feature.home.composables.MainContentFrame
 import tech.pixelw.flick.feature.home.composables.MainNavDrawer
 import tech.pixelw.flick.theme.FlickTheme
@@ -59,8 +61,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     MainNavDrawer(drawerState = drawerState) {
-                        MainContentFrame(title = currentTitleModel!!.title) {
-
+                        MainContentFrame(
+                            title = currentTitleModel.title,
+                            upperTitle = currentTitleModel.upperTitle,
+                            lowerTitle = currentTitleModel.lowerTitle
+                        ) {
+                            AndroidViewBinding(ContentMainBinding::inflate)
                         }
                     }
                 }

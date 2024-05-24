@@ -81,6 +81,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-viewbinding")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
 
     // base View
@@ -116,6 +117,11 @@ dependencies {
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:3.0-alpha-1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    val navVersion = "2.7.7"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
     // test
     testImplementation("junit:junit:4.13.2")

@@ -24,5 +24,6 @@
     <string name="music_player">音乐播放器</string>
     <string name="settings">设置</string>
     <string name="version_x">版本 %s</string>
+    <string name="someones_avatar">%1$s的头像</string>
 
 </resources>
