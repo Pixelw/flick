@@ -8,9 +8,9 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.R
+import tech.pixelw.flick.common.resources.PresetHosts
 import tech.pixelw.flick.common.resources.ResourceConfig
 import tech.pixelw.flick.common.resources.ResourceMapper
-import tech.pixelw.flick.common.resources.Urls
 import java.util.Calendar
 import kotlin.math.min
 
@@ -67,7 +67,7 @@ data class MusicModel(
 
     fun getSongArtUrl(): String {
         return when (ResourceConfig.musicArtImg) {
-            ResourceConfig.LAPI -> "${Urls.lapiRootPath}img/musicjacket/${musicSerialId}_jacket1.webp"
+            PresetHosts.LAPI -> "${PresetHosts.LAPI.baseUrl}img/musicjacket/${musicSerialId}_jacket1.webp"
             else -> ""
         }
 
@@ -75,7 +75,7 @@ data class MusicModel(
 
     fun getSongFileUrl(): String {
         return when (ResourceConfig.musicFile) {
-            ResourceConfig.LAPI -> "${Urls.lapiRootPath}music/${musicSerialId}.mp3"
+            PresetHosts.LAPI -> "${ResourceConfig.netApiDefault}music/${musicSerialId}.mp3"
             else -> ""
         }
     }

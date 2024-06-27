@@ -13,23 +13,26 @@ package tech.pixelw.flick.common.resources
  */
 object ResourceConfig {
 
-    const val LAPI = 1
-
     // TODO: SLY 24/2/19 动态配置多个资源源站
 
-    var netApiRoot = Urls.lapiRootPath
+    var netApiDefault = PresetHosts.LAPI
 
-    var musicFile = LAPI
+    var musicFile = PresetHosts.LAPI
         private set
 
-    var musicArtImg = LAPI
+    var musicArtImg = PresetHosts.LAPI
         private set
 
-    var cardArtImg = LAPI
+    var cardArtImg = PresetHosts.LAPI
         private set
 
-    var cardThumbImg = LAPI
+    var cardThumbImg = PresetHosts.LAPI
         private set
+
+
+    fun applyConfig(resourceHostConfig: ResourceHostConfig) {
+        //// TODO: SLY 24/6/27
+    }
 
 
 }
