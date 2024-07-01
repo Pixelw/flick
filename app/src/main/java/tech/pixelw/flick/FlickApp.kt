@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import tech.pixelw.flick.common.resources.ResourceHostRepository
 import tech.pixelw.flick.core.misc.LogUtil
 import tech.pixelw.flick.core.network.SharedCronetEngine
 import tech.pixelw.flick.core.network.SharedOkhttpClient
@@ -33,7 +34,7 @@ class FlickApp : Application(), ImageLoaderFactory {
         startCronetInitJob = MainScope().launch(Dispatchers.Default) {
             LogUtil.d("installProvider start", "CronetInit")
             val startMillis = System.currentTimeMillis()
-            suspendCancellableCoroutine<Boolean> { cont ->
+            suspendCancellableCoroutine { cont ->
                 CronetProviderInstaller.installProvider(context).addOnCompleteListener {
                     if (it.isSuccessful) {
                         SharedCronetEngine.initSuccess = true
@@ -45,6 +46,7 @@ class FlickApp : Application(), ImageLoaderFactory {
             LogUtil.d("installProvider complete, costs ${System.currentTimeMillis() - startMillis}ms", "CronetInit")
         }
 
+        ResourceHostRepository.fetchHostConfig()
 
     }
 

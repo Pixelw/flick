@@ -12,7 +12,7 @@ interface BsWebApi {
     @GET("?function=query_room_number")
     suspend fun getRooms(): List<BsRoom>
 
-    @GET("/")
-    suspend fun getQqWithId(@Query("function") func: String, @Query("user_id") bsId: Long)
+    @GET("?function=get_user_info")
+    suspend fun getUserInfo(@Query("user_id") bsId: Long)
 
 }

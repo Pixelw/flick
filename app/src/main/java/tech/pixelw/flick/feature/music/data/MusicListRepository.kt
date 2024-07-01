@@ -1,6 +1,6 @@
 package tech.pixelw.flick.feature.music.data
 
-import tech.pixelw.flick.common.apis
+import tech.pixelw.flick.common.getApis
 import tech.pixelw.flick.core.misc.LogUtil
 
 object MusicListRepository {
@@ -15,19 +15,17 @@ object MusicListRepository {
 //    private var cachedMetadataListMap: MutableMap<String, List<MediaMetadata>> = mutableMapOf()
 //    private var cachedMediaItemListMap: MutableMap<String, List<MediaItem>> = mutableMapOf()
 
-    private val api by apis(MusicNetApi::class.java)
-
     suspend fun getMusicList(rootId: String): List<MusicModel> {
         val cached = cachedListMap[rootId]
         if (cached != null) return cached
         when (rootId) {
             BANDORI_DEFAULT_PLAY_ROOT -> {
-                api.runCatching {
+                getApis(MusicNetApi::class.java)?.runCatching {
                     getAllBandoriMusic()
-                }.onSuccess {
+                }?.onSuccess {
                     cachedListMap[rootId] = it
                     return it
-                }.onFailure {
+                }?.onFailure {
                     LogUtil.e("get music list failed", it, tag = TAG)
                 }
             }

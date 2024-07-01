@@ -17,21 +17,25 @@ object ResourceConfig {
 
     var netApiDefault = PresetHosts.LAPI
 
-    var musicFile = PresetHosts.LAPI
+    var musicFile = netApiDefault
+        get() = netApiDefault
         private set
 
-    var musicArtImg = PresetHosts.LAPI
+    var musicArtImg = netApiDefault
+        get() = netApiDefault
         private set
 
-    var cardArtImg = PresetHosts.LAPI
+    var cardArtImg = netApiDefault
+        get() = netApiDefault
         private set
 
-    var cardThumbImg = PresetHosts.LAPI
+    var cardThumbImg = netApiDefault
+        get() = netApiDefault
         private set
 
 
-    fun applyConfig(resourceHostConfig: ResourceHostConfig) {
-        //// TODO: SLY 24/6/27
+    fun setBaseApi(host: Host) {
+        netApiDefault = host
     }
 
 

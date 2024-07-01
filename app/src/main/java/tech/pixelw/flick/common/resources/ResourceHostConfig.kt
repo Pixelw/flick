@@ -4,23 +4,16 @@ import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-
 @Keep
 @JsonClass(generateAdapter = true)
-data class ResourceHostConfig(
-    @Json(name = "bandroid")
-    val bandroid: Bandroid = Bandroid()
-)
-
-
-@Keep
-@JsonClass(generateAdapter = true)
-data class Bandroid(
+data class HostConfig(
     @Json(name = "default")
     val default: String = "",
     @Json(name = "hostList")
     val hostList: List<Host> = listOf()
-)
+) {
+    fun getDefaultHost(): Host? = hostList.find { it.name == default }
+}
 
 @Keep
 @JsonClass(generateAdapter = true)
