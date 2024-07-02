@@ -5,6 +5,7 @@ package tech.pixelw.flick.common
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
+import tech.pixelw.flick.FlickApp
 import tech.pixelw.flick.common.resources.PresetHosts
 import tech.pixelw.flick.common.resources.ResourceHostRepository
 import tech.pixelw.flick.core.network.NetApiFactory
@@ -48,6 +49,7 @@ suspend fun <T> getApis(
     cls: Class<T>,
     apiType: String = ResourceHostRepository.BASE_API,
 ): T? {
+    FlickApp.startCronetInitJob?.join()
     val host = ResourceHostRepository.getConfigForKey(apiType)?.getDefaultHost() ?: return null
     return NetApiFactory.get(cls, host.baseUrl)
 }

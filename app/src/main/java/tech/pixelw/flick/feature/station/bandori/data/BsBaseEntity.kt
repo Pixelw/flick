@@ -8,9 +8,9 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 open class BsBaseEntity(
     @Json(name = "timestamp")
-    val timestamp: Long = 0,
+    var timestamp: Long = 0,
     @Json(name = "user_info")
-    val userInfo: BsUserInfo = BsUserInfo()
+    var userInfo: BsUserInfo = BsUserInfo()
 
 ) {
     fun isMySide(myId: String): Boolean {
