@@ -1,11 +1,11 @@
 package tech.pixelw.flick.feature.home
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +24,7 @@ import tech.pixelw.flick.feature.home.composables.MainContentFrame
 import tech.pixelw.flick.feature.home.composables.MainNavDrawer
 import tech.pixelw.flick.theme.FlickTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {

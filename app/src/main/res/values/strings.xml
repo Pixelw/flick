@@ -25,5 +25,6 @@
     <string name="settings">设置</string>
     <string name="version_x">版本 %s</string>
     <string name="someones_avatar">%1$s的头像</string>
+    <string name="copy_and_jump">复制并跳转</string>
 
 </resources>

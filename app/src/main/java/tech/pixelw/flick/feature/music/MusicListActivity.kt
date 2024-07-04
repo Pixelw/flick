@@ -102,7 +102,7 @@ class MusicListActivity : ComponentActivity() {
         if (viewModel.currentPlayIndex.value!! < 0) return
         // 链接到播放服务
         lifecycleScope.launch {
-            FlickApp.startCronetInitJob?.join()
+            FlickApp.networkStackInitJob?.join()
             val token =
                 SessionToken(this@MusicListActivity, ComponentName(this@MusicListActivity, MusicPlayService::class.java))
             controllerFuture = MediaController.Builder(this@MusicListActivity, token).buildAsync()

@@ -1,5 +1,6 @@
 package tech.pixelw.flick.feature.music
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -61,6 +62,7 @@ class MusicPlayViewModel : ViewModel(), DefaultLifecycleObserver {
         }
     }
 
+    @SuppressLint("DiscouragedApi")         // timer在进入后台就取消了所以无所谓
     fun seekBarPlay(position: PlayPosition) {
         this.playPosition.value = position
         seekbarUpdateTask?.cancel()

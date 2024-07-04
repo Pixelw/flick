@@ -8,7 +8,7 @@ class StationDataRepository {
     private val api = apis(BsWebApi::class.java, "bandoriStationApi")
     suspend fun getRoomNumber(): List<BsRoom> {
         val api = api.await() ?: return emptyList()
-        return api.getRooms()
+        return api.getRooms().response ?: emptyList()
     }
 
 

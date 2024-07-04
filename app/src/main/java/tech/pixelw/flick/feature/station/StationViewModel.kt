@@ -7,8 +7,10 @@ import kotlinx.coroutines.launch
 import tech.pixelw.flick.feature.station.bandori.data.BsRoom
 
 class StationViewModel : ViewModel() {
-    val dataRepository = StationDataRepository()
+    private val dataRepository = StationDataRepository()
     val dataList = MutableStateFlow(listOf<BsRoom>())
+    var myUid: String = ""
+        private set
 
     fun loadData() {
         viewModelScope.launch {

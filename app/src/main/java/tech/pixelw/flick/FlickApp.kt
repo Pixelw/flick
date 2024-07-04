@@ -23,7 +23,7 @@ class FlickApp : Application(), ImageLoaderFactory {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         lateinit var appName: String
-        var startCronetInitJob: Job? = null
+        var networkStackInitJob: Job? = null
             private set
     }
 
@@ -31,7 +31,7 @@ class FlickApp : Application(), ImageLoaderFactory {
         context = applicationContext
         super.onCreate()
         appName = context.getString(R.string.app_name)
-        startCronetInitJob = MainScope().launch(Dispatchers.Default) {
+        networkStackInitJob = MainScope().launch(Dispatchers.Default) {
             LogUtil.d("installProvider start", "CronetInit")
             val startMillis = System.currentTimeMillis()
             suspendCancellableCoroutine { cont ->
@@ -43,11 +43,13 @@ class FlickApp : Application(), ImageLoaderFactory {
                     cont.resume(it.isSuccessful)
                 }
             }
-            LogUtil.d("installProvider complete, costs ${System.currentTimeMillis() - startMillis}ms", "CronetInit")
+            val default = SharedOkhttpClient.DEFAULT
+            LogUtil.d(
+                "installProvider complete, Call.Factory: ${default.hashCode()}, costs ${System.currentTimeMillis() - startMillis}ms",
+                "CronetInit"
+            )
+            ResourceHostRepository.fetchHostConfig()
         }
-
-        ResourceHostRepository.fetchHostConfig()
-
     }
 
     override fun newImageLoader(): ImageLoader {

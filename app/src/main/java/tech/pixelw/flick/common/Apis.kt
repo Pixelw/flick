@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package tech.pixelw.flick.common
 
 import kotlinx.coroutines.Deferred
@@ -49,7 +47,7 @@ suspend fun <T> getApis(
     cls: Class<T>,
     apiType: String = ResourceHostRepository.BASE_API,
 ): T? {
-    FlickApp.startCronetInitJob?.join()
-    val host = ResourceHostRepository.getConfigForKey(apiType)?.getDefaultHost() ?: return null
+    FlickApp.networkStackInitJob?.join()
+    val host = ResourceHostRepository.getConfigForKey(apiType)?.getDefaultHost() ?: throw NoSuchElementException("apiType $apiType not found")
     return NetApiFactory.get(cls, host.baseUrl)
 }
