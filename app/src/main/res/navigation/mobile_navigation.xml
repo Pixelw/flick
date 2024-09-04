@@ -9,4 +9,9 @@
         android:name="tech.pixelw.flick.feature.station.StationFragment"
         android:label="@string/bandoristation" />
 
+    <fragment
+        android:id="@+id/screen_music_player"
+        android:name="tech.pixelw.flick.feature.music."
+        android:label="@string/music_player" />
+
 </navigation>

@@ -20,7 +20,7 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
     private var heartBeatThread: Runnable = object : Runnable {
         override fun run() {
             if (send(HEARTBEAT_STRING)) {
-                LogUtil.i(TAG, "heartbeat ok: " + ++heartBeatCount)
+                LogUtil.i("heartbeat ok: " + ++heartBeatCount, TAG)
             }
             handler.postDelayed(this, HEARTBEAT_INTERVAL.toLong())
         }
@@ -29,7 +29,6 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
 
     // repository回调
     var callback: Callback? = null
-
     // 下层 ws监听器
     private val webSocketListener: BsWebSocketListener by lazy {
         BsWebSocketListener(object : BsWebSocketListener.Callback {
@@ -38,8 +37,8 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
                 toggleRunning(false)
             }
 
-            override fun updateMessage(string: String?) {
-                LogUtil.d(TAG, "recv:$string")
+            override fun updateMessage(string: String) {
+                LogUtil.d("recv:$string", TAG)
                 callback?.onResponse(string)
             }
 
@@ -48,9 +47,9 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
                 toggleRunning(true)
             }
 
-            override fun onFailure(throwable: Throwable?) {
+            override fun onFailure(throwable: Throwable) {
                 connecting = false
-                callback?.onWsStatusChanged(throwable!!.localizedMessage)
+                callback?.onWsStatusChanged(throwable.localizedMessage)
             }
         })
     }
@@ -59,9 +58,9 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
     private var pendingSendText: String? = null
     private var connecting = false
 
-    fun connectWs(): Boolean {
+    fun connectWs() {
         if (connecting) {
-            return true
+            return
         }
         val request = Request.Builder()
             .url(URL)
@@ -69,7 +68,6 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
 
         webSocket = okHttpClient.newWebSocket(request, webSocketListener)
         connecting = true
-        return true
     }
 
 
@@ -81,17 +79,18 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
     fun send(text: String?): Boolean {
         // 当断开链接时尝试重连
         if (!running) {
-            LogUtil.w(TAG, "send method trying to reconnect")
+            LogUtil.w("send method trying to reconnect", TAG)
             //            sendWaitingQueue.add(text);
             pendingSendText = text
-            return connectWs()
+            connectWs()
+            return true
         }
         val success = webSocket!!.send(text!!)
         if (success) {
-            LogUtil.i(TAG, "send: $text")
+            LogUtil.i("send: $text", TAG)
         } else {
             callback!!.onWsStatusChanged(WS_DISCONNECTED)
-            LogUtil.e(TAG, "send failed...")
+            LogUtil.e("send failed...", TAG)
         }
         return success
     }
@@ -129,15 +128,15 @@ open class BsWebSocketWorker(private val okHttpClient: OkHttpClient) {
 
 
     interface Callback {
-        fun onResponse(response: String?)
+        fun onResponse(response: String)
 
-        fun onWsStatusChanged(status: String?)
+        fun onWsStatusChanged(status: String)
     }
 
     companion object {
         const val URL: String = "wss://api.bandoristation.com"
         const val HEARTBEAT_INTERVAL: Int = 25 * 1000
-        const val HEARTBEAT_STRING: String = "{action: \"heartbeat\", data: {client: \"Bandroid\"}}"
+        const val HEARTBEAT_STRING: String = "{action: \"heartbeat\", data: {client: \"Flick\"}}"
         private const val TAG = "BsWebSocketWorker"
         const val WS_CONNECTED: String = "connected"
         const val WS_DISCONNECTED: String = "disconnected"

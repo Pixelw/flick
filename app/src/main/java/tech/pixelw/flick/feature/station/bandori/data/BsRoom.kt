@@ -8,7 +8,7 @@ data class BsRoom(
     @Json(name = "number")
     val number: String = "",
     @Json(name = "raw_message")
-    val rawMessage: String = "",
+    var message: String = "",
     @Json(name = "type")
     val type: String = "",
     @Json(name = "source_info")

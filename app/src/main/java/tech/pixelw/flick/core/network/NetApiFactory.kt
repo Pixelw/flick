@@ -4,6 +4,7 @@ package tech.pixelw.flick.core.network
 
 import org.jetbrains.annotations.ApiStatus.Internal
 import retrofit2.Retrofit
+import tech.pixelw.flick.core.json.MoshiConverterFactory
 
 object NetApiFactory {
 

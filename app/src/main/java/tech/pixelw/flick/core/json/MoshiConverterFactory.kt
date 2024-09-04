@@ -1,4 +1,4 @@
-package tech.pixelw.flick.core.network
+package tech.pixelw.flick.core.json
 
 import retrofit2.converter.moshi.MoshiConverterFactory
 

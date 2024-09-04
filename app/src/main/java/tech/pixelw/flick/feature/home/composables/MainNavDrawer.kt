@@ -60,15 +60,14 @@ enum class MainNavDrawerEntrance {
 @Composable
 fun MainNavDrawer(
     drawerState: DrawerState,
-    screenContent: (@Composable () -> Unit)
+    screenContent: (@Composable () -> Unit),
+    onItemClicked: ((MainNavDrawerEntrance) -> Unit)
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                MainNavDrawerContent {
-
-                }
+                MainNavDrawerContent(onItemClicked)
             }
         },
         content = screenContent,
@@ -192,6 +191,6 @@ private fun DrawerItem(iconRes: Int, text: String, selected: Boolean, onClick: (
 @Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE, uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 fun MainNavDrawerPreview() {
     FlickTheme {
-        MainNavDrawer(rememberDrawerState(initialValue = DrawerValue.Open)) {}
+        MainNavDrawer(rememberDrawerState(initialValue = DrawerValue.Open), screenContent = {}, onItemClicked = {})
     }
 }

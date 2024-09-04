@@ -87,7 +87,7 @@ object ImmersiveUtilX {
             window.statusBarColor = Color.TRANSPARENT
             var contentView = window.decorView.findViewById<View>(android.R.id.content)
             if (contentView == null) {
-                LogUtil.e(TAG, "could not found content view")
+                LogUtil.e("could not found content view", TAG)
                 contentView = window.decorView
             }
             ViewCompat.setOnApplyWindowInsetsListener(contentView) { _, insets ->

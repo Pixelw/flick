@@ -18,10 +18,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.ViewCompat
+import androidx.navigation.findNavController
 import kotlinx.coroutines.launch
+import tech.pixelw.flick.R
+import tech.pixelw.flick.core.extension.toast
 import tech.pixelw.flick.databinding.ContentMainBinding
 import tech.pixelw.flick.feature.home.composables.MainContentFrame
 import tech.pixelw.flick.feature.home.composables.MainNavDrawer
+import tech.pixelw.flick.feature.home.composables.MainNavDrawerEntrance
 import tech.pixelw.flick.theme.FlickTheme
 
 class MainActivity : AppCompatActivity() {
@@ -60,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-                    MainNavDrawer(drawerState = drawerState) {
+                    MainNavDrawer(drawerState = drawerState, screenContent = {
                         MainContentFrame(
                             title = currentTitleModel.title,
                             upperTitle = currentTitleModel.upperTitle,
@@ -68,9 +72,31 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             AndroidViewBinding(ContentMainBinding::inflate)
                         }
-                    }
+                    }, onItemClicked = {
+                        when (it) {
+                            MainNavDrawerEntrance.BD_STATION -> {
+                                findNavController(R.id.nav_host_fragment).navigate(R.id.screen_station)
+                            }
+
+                            MainNavDrawerEntrance.BD_EVENTS -> todo()
+                            MainNavDrawerEntrance.BD_SONGS -> todo()
+                            MainNavDrawerEntrance.PJSK_STATION -> todo()
+                            MainNavDrawerEntrance.PJSK_EVENTS -> todo()
+                            MainNavDrawerEntrance.PJSK_SONGS -> todo()
+                            MainNavDrawerEntrance.APP_MUSIC_PLAYER -> {
+                                findNavController(R.id.nav_host_fragment).navigate(R.id.screen_music_player)
+                            }
+
+                            MainNavDrawerEntrance.APP_SETTINGS -> todo()
+                        }
+
+                    })
                 }
             }
         }
+    }
+
+    private fun todo() {
+        toast("Not implemented yet...")
     }
 }

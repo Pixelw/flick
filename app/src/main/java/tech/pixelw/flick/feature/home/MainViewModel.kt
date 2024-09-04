@@ -29,7 +29,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun getPreferScreen(context: Context) {
-        context.dataStore.data.map {
+        val map = context.dataStore.data.map {
             it[SCREEN_PREF]
         }
     }

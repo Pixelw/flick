@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 @Keep
 @JsonClass(generateAdapter = true)
 open class BsBaseEntity(
-    @Json(name = "timestamp")
+    @Json(name = "time")
     var timestamp: Long = 0,
     @Json(name = "user_info")
     var userInfo: BsUserInfo = BsUserInfo()
