@@ -38,7 +38,7 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
             DateUtils.formatElapsedTime(((viewModel.playPosition.value?.duration ?: 0L) * value).toLong() / 1000)
         }
         lifecycle.addObserver(viewModel)
-        pendingStartMediaId = intent?.getStringExtra(MusicPlayActivity.K_MUSIC_ID)
+        pendingStartMediaId = arguments?.getString(MusicPlayActivity.K_MUSIC_ID)
         viewModel.commandLiveData.observe(viewLifecycleOwner) {
             when (it?.kind) {
                 MusicPlayViewModel.Command.PLAY -> {

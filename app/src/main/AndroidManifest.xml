@@ -22,7 +22,7 @@
             android:exported="true"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".feature.music.MusicListActivity"
+            android:name=".feature.music.MusicListFragment"
             android:exported="true"
             android:label="@string/title_activity_music_list">
         </activity>

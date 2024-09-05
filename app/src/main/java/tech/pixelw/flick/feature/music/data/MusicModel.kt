@@ -75,7 +75,7 @@ data class MusicModel(
 
     fun getSongFileUrl(): String {
         return when (ResourceConfig.musicFile) {
-            PresetHosts.LAPI -> "${ResourceConfig.netApiDefault}music/${musicSerialId}.mp3"
+            PresetHosts.LAPI -> "${ResourceConfig.netApiDefault.baseUrl}music/${musicSerialId}.mp3"
             else -> ""
         }
     }

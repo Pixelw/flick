@@ -10,8 +10,13 @@
         android:label="@string/bandoristation" />
 
     <fragment
+        android:id="@+id/screen_music_list"
+        android:name="tech.pixelw.flick.feature.music.MusicListFragment"
+        android:label="@string/title_activity_music_list" />
+
+    <fragment
         android:id="@+id/screen_music_player"
-        android:name="tech.pixelw.flick.feature.music."
+        android:name="tech.pixelw.flick.feature.music.MusicPlayFragment"
         android:label="@string/music_player" />
 
 </navigation>

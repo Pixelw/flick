@@ -17,12 +17,11 @@ import androidx.compose.ui.unit.sp
 import tech.pixelw.flick.R
 import tech.pixelw.flick.theme.FlickTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContentFrame(title: String, upperTitle: String = "", lowerTitle: String = "", content: @Composable () -> Unit) {
+fun MainContentFrame(title: String, upperTitle: String = "", lowerTitle: String = "", content: @Composable () -> Unit, onNavIconPressed: () -> Unit) {
     Surface {
         Column(modifier = Modifier.fillMaxSize()) {
-            MainContentAppBar(upperTitle = upperTitle, title = title, lowerTitle = lowerTitle)
+            MainContentAppBar(upperTitle = upperTitle, title = title, lowerTitle = lowerTitle, onNavIconPressed = onNavIconPressed)
             content()
 
         }
@@ -60,9 +59,9 @@ fun MainContentAppBar(title: String, upperTitle: String = "", lowerTitle: String
 @Composable
 fun MainContentFramePreview() {
     FlickTheme {
-        MainContentFrame(title = "Preview Title") {
+        MainContentFrame(title = "Preview Title", content = {
 
-        }
+        }, onNavIconPressed = {})
     }
 
 }

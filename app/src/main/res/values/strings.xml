@@ -20,7 +20,9 @@
     <string name="bangdream_gbp">BanG Dream! 少女乐团派对</string>
     <string name="pj_sekai">世界计划: 多彩舞台 feat. 初音未来</string>
     <string name="bandoristation">Bandori 车站</string>
+    <string name="pjskstation">车站</string>
     <string name="events">活动</string>
+    <string name="songs">歌曲</string>
     <string name="music_player">音乐播放器</string>
     <string name="settings">设置</string>
     <string name="version_x">版本 %s</string>

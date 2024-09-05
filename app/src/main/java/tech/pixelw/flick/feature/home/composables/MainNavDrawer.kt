@@ -44,40 +44,42 @@ import androidx.compose.ui.unit.dp
 import tech.pixelw.flick.R
 import tech.pixelw.flick.theme.FlickTheme
 
-enum class MainNavDrawerEntrance {
-    BD_STATION,
-    BD_EVENTS,
-    BD_SONGS,
+enum class MainNavDrawerEntrance(val group: Int, val stringId: Int) {
+    BD_STATION(1, R.string.bandoristation),
+    BD_EVENTS(1, R.string.events),
+    BD_SONGS(1, R.string.songs),
 
-    PJSK_STATION,
-    PJSK_EVENTS,
-    PJSK_SONGS,
+    PJSK_STATION(2, R.string.pjskstation),
+    PJSK_EVENTS(2, R.string.events),
+    PJSK_SONGS(2, R.string.songs),
 
-    APP_MUSIC_PLAYER,
-    APP_SETTINGS
+    APP_MUSIC_PLAYER(3, R.string.music_player),
+    APP_SETTINGS(3, R.string.settings)
 }
 
 @Composable
 fun MainNavDrawer(
     drawerState: DrawerState,
     screenContent: (@Composable () -> Unit),
-    onItemClicked: ((MainNavDrawerEntrance) -> Unit)
+    onItemClicked: ((MainNavDrawerEntrance) -> Unit),
+    selected: MainNavDrawerEntrance
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                MainNavDrawerContent(onItemClicked)
+                MainNavDrawerContent(onItemClicked, selected)
             }
         },
         content = screenContent,
-        gesturesEnabled = true
+        gesturesEnabled = false
     )
 }
 
 @Composable
 fun MainNavDrawerContent(
-    onItemClicked: ((MainNavDrawerEntrance) -> Unit)
+    onItemClicked: ((MainNavDrawerEntrance) -> Unit),
+    selectedIndex: MainNavDrawerEntrance
 ) {
     Column(
         modifier = Modifier
@@ -90,26 +92,41 @@ fun MainNavDrawerContent(
         Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
 
         DrawerGroupTitle(stringResource(id = R.string.bangdream_gbp))
-        DrawerItem(iconRes = R.drawable.round_directions_bus_filled_24, text = stringResource(R.string.bandoristation), selected = true) {
+        DrawerItem(
+            iconRes = R.drawable.round_directions_bus_filled_24,
+            text = stringResource(R.string.bandoristation),
+            selected = selectedIndex == MainNavDrawerEntrance.BD_STATION
+        ) {
             onItemClicked(MainNavDrawerEntrance.BD_STATION)
         }
-        DrawerItem(iconRes = R.drawable.round_events_24, text = stringResource(R.string.events), selected = false) {
+        DrawerItem(
+            iconRes = R.drawable.round_events_24,
+            text = stringResource(R.string.events),
+            selected = selectedIndex == MainNavDrawerEntrance.BD_EVENTS
+        ) {
             onItemClicked(MainNavDrawerEntrance.BD_EVENTS)
         }
         Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
 
 //        DrawerGroupTitle(title = stringResource(id = R.string.pj_sekai))
         DrawerGroupTitle(title = stringResource(id = R.string.tools))
-        DrawerItem(iconRes = R.drawable.round_music_note_24, text = stringResource(R.string.music_player), selected = false) {
+        DrawerItem(
+            iconRes = R.drawable.round_music_note_24,
+            text = stringResource(R.string.music_player),
+            selected = selectedIndex == MainNavDrawerEntrance.APP_MUSIC_PLAYER
+        ) {
             onItemClicked(MainNavDrawerEntrance.APP_MUSIC_PLAYER)
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        DrawerItem(iconRes = R.drawable.round_settings_24, text = stringResource(id = R.string.settings), selected = false) {
+        DrawerItem(
+            iconRes = R.drawable.round_settings_24,
+            text = stringResource(id = R.string.settings),
+            selected = selectedIndex == MainNavDrawerEntrance.APP_SETTINGS
+        ) {
             onItemClicked(MainNavDrawerEntrance.APP_SETTINGS)
         }
         Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
-
 
     }
 
@@ -191,6 +208,6 @@ private fun DrawerItem(iconRes: Int, text: String, selected: Boolean, onClick: (
 @Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE, uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 fun MainNavDrawerPreview() {
     FlickTheme {
-        MainNavDrawer(rememberDrawerState(initialValue = DrawerValue.Open), screenContent = {}, onItemClicked = {})
+        MainNavDrawer(rememberDrawerState(initialValue = DrawerValue.Open), screenContent = {}, onItemClicked = {}, MainNavDrawerEntrance.BD_STATION)
     }
 }
