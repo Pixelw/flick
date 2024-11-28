@@ -21,11 +21,6 @@
             android:name=".feature.music.MusicPlayActivity"
             android:exported="true"
             tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name=".feature.music.MusicListFragment"
-            android:exported="true"
-            android:label="@string/title_activity_music_list">
-        </activity>
 
         <service
             android:name=".feature.music.MusicPlayService"
