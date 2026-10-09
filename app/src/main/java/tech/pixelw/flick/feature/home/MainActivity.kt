@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,10 +29,10 @@ import tech.pixelw.flick.theme.FlickTheme
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+    /** 启用全面屏并创建包含抽屉和 Fragment 导航内容的首页。 */
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets -> insets }
+        enableEdgeToEdge()
         setContent {
             FlickTheme {
                 // A surface container using the 'background' color from the theme
@@ -58,7 +59,12 @@ class MainActivity : AppCompatActivity() {
                             upperTitle = currentTitleModel.upperTitle,
                             lowerTitle = currentTitleModel.lowerTitle,
                             content = {
-                                AndroidViewBinding(ContentMainBinding::inflate)
+                                AndroidViewBinding(ContentMainBinding::inflate) {
+                                    // 外层 Scaffold 已处理系统栏，避免 Fragment 内的 Compose 再次添加间距。
+                                    ViewCompat.setOnApplyWindowInsetsListener(root) { _, _ ->
+                                        WindowInsetsCompat.CONSUMED
+                                    }
+                                }
                             }, onNavIconPressed = {
                                 scope.launch {
                                     viewModel.openDrawer()

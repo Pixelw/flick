@@ -12,7 +12,7 @@ Layouts, navigation graphs, strings, and drawable assets belong in `app/src/main
 
 ## Build, Test, and Development Commands
 
-Use the checked-in Gradle wrapper with `--no-daemon`. The project uses Gradle 8.7, Android Gradle Plugin 8.4.2, and compile SDK 34; use JDK 17 and an installed Android SDK.
+Use the checked-in Gradle wrapper with `--no-daemon`. The project uses Gradle 9.6.0, Android Gradle Plugin 9.4.1, built-in Kotlin 2.2.10, compile/target SDK 36, and min SDK 26. Use JDK 25 (Android Studio's bundled JBR) and an installed Android SDK. Java/Kotlin bytecode targets remain at 1.8. Configure the local Gradle JDK in Android Studio and set `JAVA_HOME` to the same JDK for command-line builds; do not commit machine-specific JDK paths.
 
 - `./gradlew :app:assembleDebug --no-daemon`: build the default development APK.
 - `./gradlew :app:testDebugUnitTest --no-daemon`: run JVM tests.

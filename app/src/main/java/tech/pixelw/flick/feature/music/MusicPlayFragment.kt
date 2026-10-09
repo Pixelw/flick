@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
 import androidx.media3.common.Player
@@ -31,8 +35,26 @@ class MusicPlayFragment : BaseFragment<FragmentMusicPlayBinding>(R.layout.fragme
 
     override fun usingBinding() = true
 
+    /** 绑定播放状态、控制器和系统栏安全间距，支持在较小窗口中滚动播放内容。 */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val initialLeft = view.paddingLeft
+        val initialTop = view.paddingTop
+        val initialRight = view.paddingRight
+        val initialBottom = view.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val safeInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.updatePadding(
+                left = initialLeft + safeInsets.left,
+                top = initialTop + safeInsets.top,
+                right = initialRight + safeInsets.right,
+                bottom = initialBottom + safeInsets.bottom
+            )
+            WindowInsetsCompat.CONSUMED
+        }
+        view.doOnAttach { ViewCompat.requestApplyInsets(it) }
         binding.vm = viewModel
         binding.sliderPlayer.setLabelFormatter { value ->
             DateUtils.formatElapsedTime(((viewModel.playPosition.value?.duration ?: 0L) * value).toLong() / 1000)
