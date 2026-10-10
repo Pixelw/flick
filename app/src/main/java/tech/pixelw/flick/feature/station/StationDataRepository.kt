@@ -106,7 +106,8 @@ class StationDataRepository {
 
             BsWsAction.ACTION_SEND_CHAT -> {
                 val adapter = moshi.adapter<List<BsMessage>>()
-                val list = adapter.fromJson(getObj(jsonObj)) ?: return
+                // sendChat 推送的 response 是消息数组，与房间号列表使用相同的数组提取方式。
+                val list = adapter.fromJson(getArr(jsonObj)) ?: return
                 callback(list, action)
             }
         }
