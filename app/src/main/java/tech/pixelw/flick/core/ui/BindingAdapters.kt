@@ -3,13 +3,14 @@ package tech.pixelw.flick.core.ui
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import coil.load
+import coil3.load
 import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.slider.Slider
 
 
 object BindingAdapters {
     @JvmStatic
+    /** 将远程图片加载到绑定的 ImageView。 */
     @BindingAdapter("coilSrc")
     fun coilSrc(imageView: ImageView, url: String?) {
         imageView.load(url)

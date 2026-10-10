@@ -29,9 +29,10 @@ object SharedOkhttpClient {
 
     private fun getCallFactory(): Call.Factory {
         Log.d(TAG, "getCallFactory() called")
-        if (preferCronet && SharedCronetEngine.initSuccess && SharedCronetEngine.getEngine() != null) {
+        val engine = if (preferCronet && SharedCronetEngine.initSuccess) SharedCronetEngine.getEngine() else null
+        if (engine != null) {
             try {
-                return CronetCallFactory.newBuilder(SharedCronetEngine.getEngine()).build()
+                return CronetCallFactory.newBuilder(engine).build()
             } catch (t: Throwable) {
                 LogUtil.e("init Cronet failed", t)
             }

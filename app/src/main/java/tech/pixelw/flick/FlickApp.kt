@@ -3,9 +3,12 @@ package tech.pixelw.flick
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.request.CachePolicy
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.network.cachecontrol.CacheControlCacheStrategy
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.request.CachePolicy
 import com.google.android.gms.net.CronetProviderInstaller
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,7 +21,7 @@ import tech.pixelw.flick.core.network.SharedCronetEngine
 import tech.pixelw.flick.core.network.SharedOkhttpClient
 import kotlin.coroutines.resume
 
-class FlickApp : Application(), ImageLoaderFactory {
+class FlickApp : Application(), SingletonImageLoader.Factory {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
@@ -52,11 +55,20 @@ class FlickApp : Application(), ImageLoaderFactory {
         }
     }
 
-    override fun newImageLoader(): ImageLoader {
+    /** 创建共享图片加载器，复用网络传输并遵循服务端缓存策略。 */
+    @OptIn(ExperimentalCoilApi::class)
+    override fun newImageLoader(context: Context): ImageLoader {
         LogUtil.d("newImageLoader() called")
-        return ImageLoader.Builder(this)
+        return ImageLoader.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .callFactory(SharedOkhttpClient.DEFAULT)
+            .components {
+                add(
+                    OkHttpNetworkFetcherFactory(
+                        callFactory = { SharedOkhttpClient.DEFAULT },
+                        cacheStrategy = { CacheControlCacheStrategy() }
+                    )
+                )
+            }
             .build()
     }
 }
