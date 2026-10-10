@@ -26,10 +26,12 @@ class FlickApp : Application(), SingletonImageLoader.Factory {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         lateinit var appName: String
+        /** 跟踪 Cronet 安装及共享网络工厂初始化，供网络请求挂起等待。 */
         var networkStackInitJob: Job? = null
             private set
     }
 
+    /** 启动 Cronet 安装，并在安装结束后初始化共享网络工厂和资源配置。 */
     override fun onCreate() {
         context = applicationContext
         super.onCreate()
@@ -46,22 +48,27 @@ class FlickApp : Application(), SingletonImageLoader.Factory {
                     cont.resume(it.isSuccessful)
                 }
             }
-            val default = SharedOkhttpClient.DEFAULT
+            val default = SharedOkhttpClient.initialize()
             LogUtil.d(
-                "installProvider complete, Call.Factory: ${default.hashCode()}, costs ${System.currentTimeMillis() - startMillis}ms",
+                "installProvider complete, Call.Factory: ${default.javaClass.simpleName}, costs ${System.currentTimeMillis() - startMillis}ms",
                 "CronetInit"
             )
             ResourceHostRepository.fetchHostConfig()
         }
     }
 
-    /** 创建共享图片加载器，复用网络传输并遵循服务端缓存策略。 */
+    /** 创建等待网络初始化完成的共享图片加载器，复用网络传输并遵循服务端缓存策略。 */
     @OptIn(ExperimentalCoilApi::class)
     override fun newImageLoader(context: Context): ImageLoader {
         LogUtil.d("newImageLoader() called")
         return ImageLoader.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
             .components {
+                add { chain ->
+                    // 只挂起图片请求，网络初始化期间界面仍可正常显示。
+                    checkNotNull(networkStackInitJob) { "网络初始化尚未启动" }.join()
+                    chain.proceed()
+                }
                 add(
                     OkHttpNetworkFetcherFactory(
                         callFactory = { SharedOkhttpClient.DEFAULT },

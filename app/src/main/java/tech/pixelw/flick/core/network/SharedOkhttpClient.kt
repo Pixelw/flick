@@ -22,10 +22,19 @@ object SharedOkhttpClient {
             .cache(Cache(FlickApp.context.cacheDir, 256 * 1024 * 1024))
         builder.build()
     }
-    /**
-     * 如果可用, 将会桥接至Cronet
-     */
-    val DEFAULT: Call.Factory = getCallFactory()
+
+    @Volatile
+    private var initializedCallFactory: Call.Factory? = null
+
+    /** 返回初始化完成后确定的共享网络工厂；初始化前访问会抛出异常。 */
+    val DEFAULT: Call.Factory
+        get() = checkNotNull(initializedCallFactory) { "共享网络工厂尚未完成初始化" }
+
+    /** 在 Cronet 安装结束后创建共享网络工厂，重复调用时复用已创建的实例。 */
+    @Synchronized
+    fun initialize(): Call.Factory {
+        return initializedCallFactory ?: getCallFactory().also { initializedCallFactory = it }
+    }
 
     private fun getCallFactory(): Call.Factory {
         Log.d(TAG, "getCallFactory() called")
